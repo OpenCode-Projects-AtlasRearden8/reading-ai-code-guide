@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 1 — What Code Actually Does · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 1 — What Code Actually Does</h1>
+<div class="chapter-meta">Chapter 1 · ~1,687 words · ~8 min read</div>
+<p>Before you can read code safely, you need a working mental model of what code <em>is</em>. Not a computer science model — a kitchen model. Once you have this one analogy, 90% of what confuses beginners about "code" stops being mysterious, and the safety chapters in this book start to feel obvious rather than exotic.</p>
+<h2 id="the-recipe-analogy-and-where-it-runs-out">The recipe analogy (and where it runs out)</h2>
+<p>Code is a <strong>recipe written for a very fast, very literal, very dumb cook</strong>.</p>
+<ul>
+<li>A <em>program</em> is the whole recipe: "Make lasagna. First boil the pasta, then brown the meat…"</li>
+<li>A <em>script</em> is a one-page recipe — renamethese-files.txt, redo-my-spreadsheet.txt. Most AI-written code you'll get is a script.</li>
+<li>The <em>computer</em> is the cook: it follows the recipe word for word, at absurd speed.</li>
+<li>The cook is <strong>dangerously literal</strong>. If the recipe says "cut the onions," the cook cuts whatever is nearest, no questions asked — while you meant "the two onions in the fridge." The recipe had no idea what you "meant."</li>
+<li>The cook <strong>never tastes anything</strong>. It doesn't notice the dish is wrong; it only notices when the <em>instructions</em> are impossible ("take the pan out of a cupboard with no pan"). "The lasagna tastes like salt-salt salt" is a real dish the cook will proudly serve you, because nobody told it onions aren't salt.</li>
+</ul>
+<p>That last point is the core insight of this entire book: <strong>a computer running code never evaluates the outcome</strong>. If the instructions are wrong <em>in a possible way</em> — "delete every file in C:\Users\Dylan" when you only wanted a temp folder cleaned — the cook will do exactly that, immediately, without hesitating, without asking.</p>
+<p>And here's where the analogy runs out in an important, uncomfortable direction: recipes only touch food. <strong>Code touches files, internet connections, and other programs.</strong> The cook can open your mail, wire money, and burn down the kitchen if the recipe says so. That's why we have safety routines you'd never need for making soup.</p>
+<h2 id="what-a-program-actually-consists-of">What a program actually consists of</h2>
+<p>Any script, in any language, is made of a few kinds of parts. You can ignore the fancy names below on a first read; they're here for the glossary to point back at.</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it really is</th>
+<th>Kitchen phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Statement</td>
+<td>One instruction. Often one line.</td>
+<td>"Preheat the oven."</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>A labeled box holding one piece of information.</td>
+<td>The note "2 cups" taped to the counter.</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>A named mini-recipe you can call by name, over and over.</td>
+<td>"The dressing recipe" — invokes it whenever.</td>
+</tr>
+<tr>
+<td>Condition (<code>if</code>)</td>
+<td>"If this, do that; otherwise something else."</td>
+<td>"If the dough is wet, add flour."</td>
+</tr>
+<tr>
+<td>Loop (<code>for</code>, <code>while</code>)</td>
+<td>"Do the following over and over — usually once per item."</td>
+<td>"Roll one ball; repeat for the whole batch."</td>
+</tr>
+<tr>
+<td>Comment</td>
+<td>A note written <em>for humans</em> the computer skips entirely.</td>
+<td>A margin note in the recipe.</td>
+</tr>
+<tr>
+<td>Import</td>
+<td>A line that borrows somebody else's pre-written mini-recipes.</td>
+<td>"Use the store's pizza dough."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Imports matter more than beginners expect.</strong> When your script says <code>import requests</code>, it is borrowing someone else's internet-handling code. <code>import os</code> grants access to your files and folders — the cook's hands. In Chapter 2 we'll build a habit of checking imports first, because they tell you which <em>domains</em> of power a script holds.</p>
+<p>Also worth knowing: most scripts you get from an AI are a <strong>main flow plus a few helper functions</strong>. The main flow is what happens when you run it; the helpers are sub-recipes it uses. When you read code in Chapter 9's walkthrough, you'll see exactly this shape.</p>
+<h2 id="a-real-tiny-script-dissected">A real tiny script, dissected</h2>
+<p>Here is a genuinely small, genuinely useful script of the kind an AI would hand you. You are not asked to write one ever — only to recognize its parts. Language is Python, chosen for readability + ubiquity.</p>
+<pre><code class="language-python">import os
+import datetime
+
+def today_prefix():
+    return datetime.date.today().isoformat()
+
+folder = &quot;photos&quot;
+for filename in os.listdir(folder):
+    if filename.startswith(&quot;IMG_&quot;):
+        new_name = today_prefix() + &quot;_&quot; + filename
+        print(&quot;Would rename&quot;, filename, &quot;to&quot;, new_name)
+</code></pre>
+<p>Line by line, in non-coder language:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What it does</th>
+<th>Sanity check a reader does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>import os</code></td>
+<td>Grants the script file-and-folder access.</td>
+<td>"This one touches my files."</td>
+</tr>
+<tr>
+<td><code>import datetime</code></td>
+<td>Grants access to a catalog of date helpers.</td>
+<td>"It needs to know today's date. Fine."</td>
+</tr>
+<tr>
+<td><code>def today_prefix():</code></td>
+<td>Defines a helper mini-recipe producing today's date as text.</td>
+<td>"Skimmed. A date, fine."</td>
+</tr>
+<tr>
+<td><code>folder = "photos"</code></td>
+<td>Sets the working folder to <em>photos, relative to wherever this is run</em>.</td>
+<td>"Which photos? Note for Chapter 7."</td>
+</tr>
+<tr>
+<td><code>for filename in os.listdir(folder):</code></td>
+<td>Loop: once for every file in the folder.</td>
+<td>"It will act on EVERY file there. All of them?"</td>
+</tr>
+<tr>
+<td><code>if filename.startswith("IMG_"):</code></td>
+<td>Condition: only files starting with <code>IMG_</code> get processed.</td>
+<td>"Good — the ones I care about."</td>
+</tr>
+<tr>
+<td><code>new_name = today_prefix() + …</code></td>
+<td>Builds the new name: date prefix + the old name.</td>
+<td>"Old name survives. Nothing destructive."</td>
+</tr>
+<tr>
+<td><code>print("Would rename", …)</code></td>
+<td>Prints a plan. <strong>Does not rename.</strong></td>
+<td>"This version changes nothing. This is a DRY RUN." (Chapter 5)</td>
+</tr>
+</tbody>
+</table>
+<p>Notice what you just did without being able to write a line of code: you identified what it touches (files), what it would <em>not</em> do (rename), and one loose end (relative folder) that Chapter 7 turns into a habit. That is reading code, reader-style: not comprehending every character, but understanding <strong>every <em>kind</em> of thing it could do to your world</strong>.</p>
+<h2 id="what-happens-when-you-run-it">What happens when you run it</h2>
+<p>A useful thing to internalize: between "code exists" and "code does anything," there is a gap. Code written by an AI has <em>proven</em> nothing by existing. Three moments matter:</p>
+<ol>
+<li><strong>It must be written</strong> (AI's moment — seconds, effortless).</li>
+<li><strong>It must be run</strong> (your moment — here the real world enters: your folders, your network, your bad luck).</li>
+<li><strong>It must be relied on</strong> (a later moment — when it <em>matters</em>, e.g., it runs overnight, unwatched, on data you didn't back up).</li>
+</ol>
+<p>The AI can never perform steps 2–3. This is why the phrase "it works on my end" is literally meaningless in an AI's mouth — a chapter 3 topic — and why Chapter 5's philosophy is: <strong>the moment code meets actual reality is the only moment that counts.</strong></p>
+<h2 id="the-four-reader-questions">The four reader questions</h2>
+<p>Every script can be interrogated with four questions. You can't answer them perfectly on first glance, but even a half-answer flags 80% of the trouble a script can cause:</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>What it uncovers</th>
+<th>Where in the code to look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. What does it take in?</strong></td>
+<td>Inputs: files it reads, things you type with flags/arguments, network calls it makes</td>
+<td>The start; <code>open(</code>, <code>input(</code>, <code>sys.argv</code>, <code>requests.</code></td>
+</tr>
+<tr>
+<td><strong>2. What does it change?</strong></td>
+<td>What it creates or alters: renames, writes, database edits</td>
+<td>The middle; <code>open(…, "w")</code>, <code>$file &gt;</code>, <code>.write(</code>, <code>rename</code>, <code>commit</code></td>
+</tr>
+<tr>
+<td><strong>3. What does it touch outside itself?</strong></td>
+<td>The boundaries where dangerous stuff lives — deletes, sends, emails, uploads, shell-outs</td>
+<td>DANGER WORDS. Chapter 2 gives you the exact list</td>
+</tr>
+<tr>
+<td><strong>4. When does it stop?</strong></td>
+<td>Whether it knows how to stop gracefully — and whether loops have safety valves</td>
+<td>"while" loops, missing <code>if</code> conditions, missing maximums</td>
+</tr>
+</tbody>
+</table>
+<p>Chapter 2 turns these into an actual 10-minute reading method. But keep the questions around; they're the reason a non-coder <em>can</em> read code: you're not reading for grammar, you're reading for <strong>power and boundaries</strong>. Power = what it can do. Boundaries = what limits that power. Dangerous code is, almost always, code with lots of power and few obvious boundaries.</p>
+<h2 id="you-dont-need-to-read-it-all">You don't need to read it all</h2>
+<p>The most liberating sentence in this chapter might be this: <strong>nobody fully reads code either.</strong> Professional programmers skim constantly, selectively, and strategically — reading just enough of the right parts to answer <em>the four questions above and the specific new risk on the table.</em> The AI-generated 200-line script someone hands you? You will read roughly 10% of it carefully: the countryside around imports, file names, loops, and any danger words. The rest — the beautiful formatting of the HTML it generates, the long lists of test data — gets skimmed.</p>
+<table>
+<thead>
+<tr>
+<th>Reading pass</th>
+<th>Time</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Structure pass</strong></td>
+<td>2 minutes</td>
+<td>Names of the file(s), function names, comments. What is this <em>for</em>? Does the shape match the promise?</td>
+</tr>
+<tr>
+<td><strong>Power pass</strong></td>
+<td>3 minutes</td>
+<td>Imports, <code>for</code> loops, and any DANGER WORDS from the table in Chapter 2</td>
+</tr>
+<tr>
+<td><strong>Boundary pass</strong></td>
+<td>5 minutes</td>
+<td>For each contact point with your world: does it ask first? check first? have limits? refuse the dangerous version?</td>
+</tr>
+</tbody>
+</table>
+<p>Ten minutes, twice. That's a full non-coder review. Chapter 9 walks one script through it step by step.</p>
+<h2 id="when-i-cant-read-code-stops-being-true">When "I can't read code" stops being true</h2>
+<p>A friendly note, since this book is written for people who self-describe that way: after years of teaching beginners, the honest observation is that practically no one <em>can't</em> read code. Plenty of people <em>believe</em> they can't because they've been shown code through the wrong lens — the lens of "understand every line" (which fails, and always would) instead of "understand what it does to me and my files" (which anyone can achieve in ten minutes per script).</p>
+<p>Reading code is closer to reading a rental agreement than reading a novel. You're not there to admire the prose. You're there to scan clause by clause, find the ones that can legally hurt you, and refuse anything that doesn't come with a way out. That skill is learnable, teachable, and — given one morning and this book — fully inside your capability.</p>
+<p>Let's get you the exact method.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="index.html">← Welcome — Read Me First</a>
+<a href="02-reading-code-you-cannot-write.html">Chapter 2 — Reading Code You Cannot Write →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 1 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

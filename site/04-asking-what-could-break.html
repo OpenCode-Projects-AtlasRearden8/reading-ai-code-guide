@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 4 — Asking What Could Break · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 4 — Asking What Could Break</h1>
+<div class="chapter-meta">Chapter 4 · ~1,696 words · ~8 min read</div>
+<p>Chapter 3 trained your ear for over-confidence. This chapter gives you the <em>questions</em> — a playbook of asks that, used before running anything, will catch most of what can go wrong. It's structured as a conversation you can have with your AI in a few minutes. The questions are also useful, with light adaptation, for a friend or nephew who wrote you a script: the goal is precise communication about risk, not interrogation.</p>
+<p>Two framing ideas before the list.</p>
+<p><strong>First: breakage is a <em>planning</em> question, not a <em>code</em> question.</strong> Asking an AI mid-task "will this break?" tends to produce reassurance ("I've handled that"). Asking <em>before</em> it writes ("before you write it — what could this break?") produces genuinely useful analysis, because the answer shapes the plan rather than defending a finished product. Ask early. Ask as design, not audit.</p>
+<p><strong>Second: you are not Looking for no; you're looking for specifics.</strong> An answer like "we should handle missing files" is a <em>specific</em> — it names a failure and implies a guard. An answer like "it's robust" is a <em>vibe</em> — note it and re-ask. The quality bar for this chapter's questions is: <strong>nameable failure, nameable guard.</strong></p>
+<h2 id="the-opening-move-the-pre-mortem">The opening move: the pre-mortem</h2>
+<p>Before the AI writes anything, ask the question this chapter is named for:</p>
+<blockquote>
+<p>"Before you write it — what could this break? Walk me through the ways this could go wrong on my machine, in plain English. Then decide what to do about each."</p>
+</blockquote>
+<p>This is called a <strong>pre-mortem</strong>: imagine the project already failed, then ask why. People love the phrase because it works: it converts vague anxiety into a list. Expect the first answer to be short (AIs front-load one or two risks). Then pull the thread with, one at a time:</p>
+<ul>
+<li>"Which of those risks is the <em>most</em> expensive to fix after it happens?"</li>
+<li>"What's a risk you didn't list because you assumed I'd never hit it?"</li>
+<li>"For each, what would I <em>notice</em> on my end if it happened — a crash, a weird filename, or silent wrongness?" (Silent wrongness is the expensive category. It's what Chapter 5 is really about.)</li>
+</ul>
+<p>You'll usually get a shortlist of 3–5 real risks. <strong>You are not expected to fix them.</strong> You carry them into Chapter 5 as the checklist of "things I'll watch in the test run." That's the whole loop: <em>ask early, turn risks into things-to-notice.</em></p>
+<h2 id="the-core-question-set">The core question set</h2>
+<p>These eight questions cover most scripts, most failure modes, and take maybe three minutes of typing. They're ordered not by importance but by conversation flow — like a small interview.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ask this</th>
+<th>What you're really asking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>"What files and folders will this <strong>read</strong>, and what will it <strong>change</strong>? List them, including any subfolders."</td>
+<td>Scope. If the list surprises you, the plan is wrong before code exists.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>"Can it run in a <strong>mode that changes nothing</strong> — a dry run or plan-only mode?"</td>
+<td>The rehearsal option. If "no," ask for it now (Ch 5's cornerstone).</td>
+</tr>
+<tr>
+<td>3</td>
+<td>"If I run it <strong>twice in a row</strong>, does it do something wrong the second time — copy twice, duplicate, corrupt?"</td>
+<td>Whether it's repeatable. Accidental double-runs are the most common how-did-this-break story in real life.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>"What happens if the <strong>network is down</strong> halfway through?"</td>
+<td>Whether the failure is graceful (stop, tell you, leave things as they were) or messy (half-changed everything).</td>
+</tr>
+<tr>
+<td>5</td>
+<td>"What happens if an <strong>input file is empty, missing, or misnamed</strong>?"</td>
+<td>The perfect-world-assumption check from Chapter 3.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>"How do I <strong>undo</strong> this? Exactly what does rollback look like?"</td>
+<td>The escape hatch. If the honest answer is "you can't," the design changes before code is written.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>"Does it need any <strong>secrets</strong> — keys, tokens, passwords — and if so, where do I put them?"</td>
+<td>Chapter 7's territory, asked up front instead of discovered in the code.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>"What's the <strong>simplest version</strong> that still does the job — no extra features?"</td>
+<td>Scope discipline. Every extra feature is extra read-time, extra test-time, extra risk.</td>
+</tr>
+</tbody>
+</table>
+<p>Question 6 deserves a moment of resonance: <em>undo as a design requirement, not an afterthought.</em> A script whose rollback story is "restore from your backup" is fine <em>if</em> you have a backup — that's Chapter 6's job. But many scripts can have better undo for free: writing outputs to a new folder instead of in place, a <code>--dry-run</code> default, a rename batch written to a log first. Asking "how do I undo it" <em>first</em> is the single highest-value question in this list, because it moves undo from hope into design.</p>
+<h2 id="question-drills-for-specific-moments">Question drills for specific moments</h2>
+<p>Beyond the core set, here are pointed asks for situations you'll recognize.</p>
+<p><strong>When the AI proposes something you didn't ask for:</strong></p>
+<blockquote>
+<p>"I asked for X. What did you add beyond X, and why? Can I have the version with only X?"</p>
+</blockquote>
+<p>Almost every AI answer includes unsolicited cleverness — retries, parallelism, caching, logging frameworks. Some are genuinely helpful; some are read-time you don't want. Choose consciously.</p>
+<p><strong>When you're about to run something for the first time on real data:</strong></p>
+<blockquote>
+<p>"You've never seen my actual folder. What are the three things most likely to be different from what you assumed? What should I check <em>before</em> running?"</p>
+</blockquote>
+<p>This question produces gold surprisingly often — the AI knows exactly what it assumed, and listing its assumptions briefly forces those assumptions into the open where you can compare them to reality.</p>
+<p><strong>When something works and you're about to rely on it:</strong></p>
+<blockquote>
+<p>"Before I rely on this weekly, stress it: what input, timing, or environment would break it? Is there a small test I can run each time to confirm it's healthy?"</p>
+</blockquote>
+<p>This is how Chapter 5's "health checks" are born — the five-second test you rerun forever after.</p>
+<p><strong>When a fix fails twice:</strong></p>
+<blockquote>
+<p>"We've tried twice and it keeps failing. Stop patching. Re-look at the <em>problem</em>: what's the likely real cause, and what's the simplest script that avoids it entirely?"</p>
+</blockquote>
+<p>Two failed patches usually mean the <em>design</em> is fighting reality, not the code. Ask for a rethink, not fix number three.</p>
+<p><strong>When code does something you can't explain (the Chapter 2 "?"):</strong></p>
+<blockquote>
+<p>"Line 14 — explain like I've never programmed, in one paragraph: what does it do, why is it here, what's the worst realistic thing it could do, and is there a safer version?"</p>
+</blockquote>
+<h2 id="getting-the-ai-to-write-the-checklist-for-you">Getting the AI to write the checklist <em>for</em> you</h2>
+<p>A trick worth its own section because it doubles your leverage. After the AI finishes a task, instead of you inventing tests, ask:</p>
+<blockquote>
+<p>"Write me a short testing checklist for what you just built: what a healthy run looks like, three edge cases to try on purpose, and one 'rollback drill' to prove I can undo it. Keep it to one page, plain English."</p>
+</blockquote>
+<p>You get four things free: the healthy-run definition — protecting against the silent-nothing failure — deliberate edge cases instead of accidental ones, an undo practice, and a <em>re-readable document</em> for next time (file it next to your script; Chapter 6's snapshot habit pairs beautifully with it).</p>
+<p>Use the same trick on the <em>risks</em> side, at the very start:</p>
+<blockquote>
+<p>"Before writing code: list the top 3 ways this could break, each with the plain-English symptom I'd notice, and one guard you'll build in."</p>
+</blockquote>
+<p>That's the pre-mortem with built-in alarms. Keep both lists; they'll be your Chapter 5 test plan almost word for word.</p>
+<h2 id="when-its-not-an-ai-applying-the-playbook-to-people">When it's not an AI — applying the playbook to people</h2>
+<p>Half of this playbook transfers, word for word, to asking a human friend or colleague about their code. What changes is <em>tone</em>: with a person, soften ("walk me through" → "can you remind me," "what could this break" → "what are you worried about?"). The conversational moves — ask early, ask for specifics, ask about undo, ask for the simplest version — work identically on people; often better. A good rule from years of tutoring humans: <strong>a beginner's sincere question is never a burden. If someone acts like it is, find a different mentor.</strong></p>
+<h2 id="a-worked-mini-conversation">A worked mini-conversation</h2>
+<p>From a real session, compressed. You asked for a script that backs up your writing folder to a <code>backups</code> subfolder, once a day, keeping the last 7 copies.</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <em>Pre-mortem first:</em> "Before you write it — what could this break, in plain English, and what will you do about each?"
+  → The AI lists: wrong folder path; disk filling up; backup <em>deleting</em> existing backups incorrectly; silently backing up zero files. Guards: verify source exists, check free space, name backups with today's date, log the count of files backed up.
+  → Notice item three: "deleting existing backups." A backup routine that touches <em>old</em> backups is exactly the delete-before-create trap from Chapter 3. Your questions found it before a single line was written.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Run-twice check?" → Confirms two same-day runs are safe (same filename, overwrite same-day copy only).</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Undo?" → "Delete today's backup file; originals are never touched." Good boundary story.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Secrets?" → None needed. (Checked anyway, Chapter 7 habits.)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Simplest version?" → Drops parallel copying, adds logging; file copied count remains.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Testing plan requested → "Back up a scratch folder of 5 fake files; then back up again same day and confirm one file, not two; then disconnect the source folder and confirm it <em>refuses loudly</em> rather than backing up nothing."</li>
+</ul>
+<p>Ten minutes, and every risk in the room has been named, guarded, and has an alarm you'll actually see. That's the difference between hoping code works and being the person in charge of it.</p>
+<h2 id="the-one-sentence-version">The one-sentence version</h2>
+<p>If you take one reflex away: <strong>before code exists, ask what could break and how you'd notice; after code exists, ask what to rehearse and how to undo.</strong> Everything else in this book is the discipline of doing that on purpose.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="03-spotting-trust-me-moments.html">← Chapter 3 — Spotting the &quot;Trust Me&quot; Moments</a>
+<a href="05-testing-before-you-rely-on-it.html">Chapter 5 — Testing Before You Rely on It →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 4 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

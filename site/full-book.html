@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Reading AI-Written Code — full book · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark">
+<a href="index.html">Reading AI-Written Code</a> · full-book edition</div></div>
+<main>
+<h1>Reading AI-Written Code</h1>
+<div class="toc-list"><h2 style="margin-top:0.3rem">Contents (jump to chapter)</h2>
+<ol style="margin:0.5rem 0 0"><li><a href="#ch-0-index">Welcome — Read Me First</a></li><li><a href="#ch-1-01-what-code-actually-does">Chapter 1 — What Code Actually Does</a></li><li><a href="#ch-2-02-reading-code-you-cannot-write">Chapter 2 — Reading Code You Cannot Write</a></li><li><a href="#ch-3-03-spotting-trust-me-moments">Chapter 3 — Spotting the &quot;Trust Me&quot; Moments</a></li><li><a href="#ch-4-04-asking-what-could-break">Chapter 4 — Asking What Could Break</a></li><li><a href="#ch-5-05-testing-before-you-rely-on-it">Chapter 5 — Testing Before You Rely on It</a></li><li><a href="#ch-6-06-keeping-originals-safe">Chapter 6 — Keeping Originals Safe</a></li><li><a href="#ch-7-07-secrets-and-paths-to-check">Chapter 7 — Secrets and Paths to Check</a></li><li><a href="#ch-8-08-the-copy-run-rollback-routine">Chapter 8 — The Copy-Run-Rollback Routine</a></li><li><a href="#ch-9-09-annotated-walkthrough">Chapter 9 — An Annotated Walkthrough</a></li><li><a href="#ch-10-10-safety-checklist-and-glossary">Chapter 10 — Safety Checklist &amp; Glossary</a></li></ol></div>
+<section id="ch-0-index"><h1>Welcome — Read Me First</h1><h2 id="who-this-book-is-for">Who this book is for</h2>
+<p>This book is for anyone who is getting code written <em>for</em> them — by ChatGPT, Claude, Gemini, OpenCode, a friend, or your nephew — but who cannot (and does not want to) become a programmer just to use it safely.</p>
+<p>Maybe you asked an AI for a little script that renames your photos, tidies your bookkeeping CSV, or scrapes your own sales page. It gave you a block of code, said "just run this," and you felt that familiar flutter: <em>I am about to run something I genuinely do not understand, written by someone/something that has never seen my computer.</em> That flutter is correct. It is also completely normal. This book exists because that moment — running code you can read but not write — deserves a real, honest method, not a shrug.</p>
+<p>You do not need any programming background. You do not need to memorize anything. The whole book fits around one habit we will build together: <strong>read a little, test a little, keep a way back.</strong> Everything else is detail supporting that habit, including the lessons where we fail — because running unfamiliar code <em>will</em> occasionally do something surprising, and a calm recovery is a much better skill than pretending it never happens.</p>
+<h2 id="what-you-will-learn">What you will learn</h2>
+<p>By the end of this book you will be able to:</p>
+<ol>
+<li><strong>Understand what code even does</strong> — plainly: programs are recipes that fetch, change, and create files, talk to the internet, and run other programs. It's all recipes.</li>
+<li><strong>Read AI-written code the reader's way</strong> — not like a programmer, but like an informed editor: names, comments, imports, and the handful of danger words that tell you where the risky parts live.</li>
+<li><strong>Spot the "trust me" moments</strong> — the confident phrases and confident-looking code that deserve extra checking, because the AI never actually ran anything.</li>
+<li><strong>Ask what could break</strong> — the question playbook that turns "it works" into "here's specifically what can go wrong, and here's how you'd notice."</li>
+<li><strong>Test before you rely on it</strong> — playground folders, dry runs, sample data, and the run-it-twice check: cheap tests that catch the mistakes that matter most.</li>
+<li><strong>Keep originals safe</strong> — snapshots, copies-with-names, and the golden rule that your original data should always survive even a catastrophically bad code run.</li>
+<li><strong>Check secrets and paths</strong> — the two places AI code most often does real damage: touching files it shouldn't touch anywhere, and handling credentials it should never see.</li>
+<li><strong>Use the copy-run-rollback routine</strong> — the core loop of this entire book, so that <em>undo</em> is always one step away, not a hope and a prayer.</li>
+<li><strong>Follow a real annotated walkthrough</strong> — a complete, working, deliberately-self-defending example script, explained block by block in non-coder language.</li>
+<li><strong>Use the safety checklist and glossary</strong> — a one-page routine and a plain-English word list you can come back to forever.</li>
+</ol>
+<h2 id="how-to-read-this-book">How to read this book</h2>
+<p>Two good ways:</p>
+<ul>
+<li><strong>Start to finish.</strong> If code still feels like a foreign language where you can't even tell a question from a statement, go in order. The chapters build: what code is, then how to read it, then how to distrust it healthily, then how to test it, then the routine.</li>
+<li><strong>As a reference.</strong> If you are mid-project with an AI-written script staring at you right now: go to Chapter 8 (the copy-run-rollback routine), then the walkthrough in Chapter 9, then the checklist in Chapter 10. The middle chapters will still be waiting for you.</li>
+</ul>
+<h2 id="companion-books">Companion books</h2>
+<p>This manual sits in a small family of beginner guides by <a href="https://dylanasdale.github.io"> rel="noopener"Asdale Dynamics, LLC</a>:</p>
+<ul>
+<li><strong>Free AI Coding with OpenCode</strong> — if you haven't yet <em>got</em> AI-written code, or want the full workflow of prompting and reviewing AI changes, plus Git as your undo button. This book's Chapter 6 assumes you may want that deeper Git runway.</li>
+<li><strong>Terminal Comfort Guide</strong> — if the black text window still feels like a power tool with no guard. That book is the handholding intro; this book assumes you can open one and paste a command.</li>
+</ul>
+<p>You don't need either book to use this one. But this book is deliberately the <em>middle</em> layer: past "how do I even run something," short of "I can program now."</p>
+<h2 id="conventions-used-in-this-book">Conventions used in this book</h2>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>command --like-this</code></td>
+<td>Something you type in a terminal. Type everything <em>after</em> the <code>$</code> in examples; never type the <code>$</code> itself.</td>
+</tr>
+<tr>
+<td><strong>Bold</strong></td>
+<td>Something to pay attention to, click, or press.</td>
+</tr>
+<tr>
+<td><em>Italic</em></td>
+<td>A term being introduced, or gentle emphasis.</td>
+</tr>
+<tr>
+<td>☐ A checklist</td>
+<td>Something to actually do, not just admire.</td>
+</tr>
+<tr>
+<td>Block</td>
+<td>A section of code we're examining — a "block" is one named chunk: a few lines that belong together, like a paragraph.</td>
+</tr>
+</tbody>
+</table>
+<p>Words you'll need early, kept deliberately simple — the full glossary waits in Chapter 10:</p>
+<ul>
+<li><strong>Code / a program / a script</strong>: text that is also instructions. A <em>script</em> is a small code file, usually one file, doing one job. This book is mostly about scripts.</li>
+<li><strong>Run / execute</strong>: the computer has read the instructions and <em>does</em> them. Only at run time does anything actually happen to your files.</li>
+<li><strong>Terminal</strong>: the text window where you type commands directly to your computer.</li>
+<li><strong>Snippet</strong>: a few lines of code out of context — often what an AI hands you in chat.</li>
+</ul>
+<h2 id="map-of-the-book">Map of the book</h2>
+<table>
+<thead>
+<tr>
+<th>Chapter</th>
+<th>Title</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>What Code Actually Does</td>
+<td>The recipe analogy; a real tiny script, dissected; the four questions</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Reading Code You Cannot Write</td>
+<td>The reader's method: names, comments, imports, danger words</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Spotting the "Trust Me" Moments</td>
+<td>Confident phrases and confident code that deserve checking</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Asking What Could Break</td>
+<td>The pre-mortem question playbook for talking to your AI</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Testing Before You Rely on It</td>
+<td>Playgrounds, dry runs, sample data, the run-twice test</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Keeping Originals Safe</td>
+<td>Snapshots, copies with names, and the data-survival golden rule</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Secrets and Paths to Check</td>
+<td>Where AI code leaks credentials and goes where it shouldn't</td>
+</tr>
+<tr>
+<td>8</td>
+<td>The Copy-Run-Rollback Routine</td>
+<td>The core loop, in full, for every script you'll ever get from an AI</td>
+</tr>
+<tr>
+<td>9</td>
+<td>An Annotated Walkthrough</td>
+<td>A real safe-renamer script, block by block, with the routine applied</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Safety Checklist &amp; Glossary</td>
+<td>The printed-one-pager and the word list</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-one-rule-of-this-book">The one rule of this book</h2>
+<p>If you remember nothing else, remember this:</p>
+<blockquote>
+<p><strong>Never let the first time you run something be the time you actually need it.</strong></p>
+</blockquote>
+<p>An AI can write a script in seconds, but it has <em>never run anything in its life</em>. It has no computer, no files, no bad luck. So it writes code optimistically — code that works in the world it imagines. You live in the world you actually have: folders with odd names, files that are half-empty, a network that drops, and Tuesday evening when you're out of patience. The routine in this book — copy, run dry, run small, run for real — exists to translate <em>imagined</em> success into <em>verified</em> success safely, every single time, in about ten minutes.</p>
+<p>That's it. That's the whole philosophy. The rest is how.</p>
+<h2 id="about-the-fine-print">About the fine print</h2>
+<p>Tool menus, model behavior, and exact phrases change constantly. This book describes things as of late 2026. The <em>techniques</em> — reading for danger words, dry runs, snapshots, rollback drills — are as durable as recipes, and they work on every AI you might be using, free or paid, cloud or local. Where I name a concrete tool or menu, treat it as "an example, check yours."</p>
+<p>Ready? Turn the page.</p>
+<hr /></section><hr><section id="ch-1-01-what-code-actually-does"><h1>Chapter 1 — What Code Actually Does</h1><p>Before you can read code safely, you need a working mental model of what code <em>is</em>. Not a computer science model — a kitchen model. Once you have this one analogy, 90% of what confuses beginners about "code" stops being mysterious, and the safety chapters in this book start to feel obvious rather than exotic.</p>
+<h2 id="the-recipe-analogy-and-where-it-runs-out">The recipe analogy (and where it runs out)</h2>
+<p>Code is a <strong>recipe written for a very fast, very literal, very dumb cook</strong>.</p>
+<ul>
+<li>A <em>program</em> is the whole recipe: "Make lasagna. First boil the pasta, then brown the meat…"</li>
+<li>A <em>script</em> is a one-page recipe — renamethese-files.txt, redo-my-spreadsheet.txt. Most AI-written code you'll get is a script.</li>
+<li>The <em>computer</em> is the cook: it follows the recipe word for word, at absurd speed.</li>
+<li>The cook is <strong>dangerously literal</strong>. If the recipe says "cut the onions," the cook cuts whatever is nearest, no questions asked — while you meant "the two onions in the fridge." The recipe had no idea what you "meant."</li>
+<li>The cook <strong>never tastes anything</strong>. It doesn't notice the dish is wrong; it only notices when the <em>instructions</em> are impossible ("take the pan out of a cupboard with no pan"). "The lasagna tastes like salt-salt salt" is a real dish the cook will proudly serve you, because nobody told it onions aren't salt.</li>
+</ul>
+<p>That last point is the core insight of this entire book: <strong>a computer running code never evaluates the outcome</strong>. If the instructions are wrong <em>in a possible way</em> — "delete every file in C:\Users\Dylan" when you only wanted a temp folder cleaned — the cook will do exactly that, immediately, without hesitating, without asking.</p>
+<p>And here's where the analogy runs out in an important, uncomfortable direction: recipes only touch food. <strong>Code touches files, internet connections, and other programs.</strong> The cook can open your mail, wire money, and burn down the kitchen if the recipe says so. That's why we have safety routines you'd never need for making soup.</p>
+<h2 id="what-a-program-actually-consists-of">What a program actually consists of</h2>
+<p>Any script, in any language, is made of a few kinds of parts. You can ignore the fancy names below on a first read; they're here for the glossary to point back at.</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it really is</th>
+<th>Kitchen phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Statement</td>
+<td>One instruction. Often one line.</td>
+<td>"Preheat the oven."</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td>A labeled box holding one piece of information.</td>
+<td>The note "2 cups" taped to the counter.</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>A named mini-recipe you can call by name, over and over.</td>
+<td>"The dressing recipe" — invokes it whenever.</td>
+</tr>
+<tr>
+<td>Condition (<code>if</code>)</td>
+<td>"If this, do that; otherwise something else."</td>
+<td>"If the dough is wet, add flour."</td>
+</tr>
+<tr>
+<td>Loop (<code>for</code>, <code>while</code>)</td>
+<td>"Do the following over and over — usually once per item."</td>
+<td>"Roll one ball; repeat for the whole batch."</td>
+</tr>
+<tr>
+<td>Comment</td>
+<td>A note written <em>for humans</em> the computer skips entirely.</td>
+<td>A margin note in the recipe.</td>
+</tr>
+<tr>
+<td>Import</td>
+<td>A line that borrows somebody else's pre-written mini-recipes.</td>
+<td>"Use the store's pizza dough."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Imports matter more than beginners expect.</strong> When your script says <code>import requests</code>, it is borrowing someone else's internet-handling code. <code>import os</code> grants access to your files and folders — the cook's hands. In Chapter 2 we'll build a habit of checking imports first, because they tell you which <em>domains</em> of power a script holds.</p>
+<p>Also worth knowing: most scripts you get from an AI are a <strong>main flow plus a few helper functions</strong>. The main flow is what happens when you run it; the helpers are sub-recipes it uses. When you read code in Chapter 9's walkthrough, you'll see exactly this shape.</p>
+<h2 id="a-real-tiny-script-dissected">A real tiny script, dissected</h2>
+<p>Here is a genuinely small, genuinely useful script of the kind an AI would hand you. You are not asked to write one ever — only to recognize its parts. Language is Python, chosen for readability + ubiquity.</p>
+<pre><code class="language-python">import os
+import datetime
+
+def today_prefix():
+    return datetime.date.today().isoformat()
+
+folder = &quot;photos&quot;
+for filename in os.listdir(folder):
+    if filename.startswith(&quot;IMG_&quot;):
+        new_name = today_prefix() + &quot;_&quot; + filename
+        print(&quot;Would rename&quot;, filename, &quot;to&quot;, new_name)
+</code></pre>
+<p>Line by line, in non-coder language:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What it does</th>
+<th>Sanity check a reader does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>import os</code></td>
+<td>Grants the script file-and-folder access.</td>
+<td>"This one touches my files."</td>
+</tr>
+<tr>
+<td><code>import datetime</code></td>
+<td>Grants access to a catalog of date helpers.</td>
+<td>"It needs to know today's date. Fine."</td>
+</tr>
+<tr>
+<td><code>def today_prefix():</code></td>
+<td>Defines a helper mini-recipe producing today's date as text.</td>
+<td>"Skimmed. A date, fine."</td>
+</tr>
+<tr>
+<td><code>folder = "photos"</code></td>
+<td>Sets the working folder to <em>photos, relative to wherever this is run</em>.</td>
+<td>"Which photos? Note for Chapter 7."</td>
+</tr>
+<tr>
+<td><code>for filename in os.listdir(folder):</code></td>
+<td>Loop: once for every file in the folder.</td>
+<td>"It will act on EVERY file there. All of them?"</td>
+</tr>
+<tr>
+<td><code>if filename.startswith("IMG_"):</code></td>
+<td>Condition: only files starting with <code>IMG_</code> get processed.</td>
+<td>"Good — the ones I care about."</td>
+</tr>
+<tr>
+<td><code>new_name = today_prefix() + …</code></td>
+<td>Builds the new name: date prefix + the old name.</td>
+<td>"Old name survives. Nothing destructive."</td>
+</tr>
+<tr>
+<td><code>print("Would rename", …)</code></td>
+<td>Prints a plan. <strong>Does not rename.</strong></td>
+<td>"This version changes nothing. This is a DRY RUN." (Chapter 5)</td>
+</tr>
+</tbody>
+</table>
+<p>Notice what you just did without being able to write a line of code: you identified what it touches (files), what it would <em>not</em> do (rename), and one loose end (relative folder) that Chapter 7 turns into a habit. That is reading code, reader-style: not comprehending every character, but understanding <strong>every <em>kind</em> of thing it could do to your world</strong>.</p>
+<h2 id="what-happens-when-you-run-it">What happens when you run it</h2>
+<p>A useful thing to internalize: between "code exists" and "code does anything," there is a gap. Code written by an AI has <em>proven</em> nothing by existing. Three moments matter:</p>
+<ol>
+<li><strong>It must be written</strong> (AI's moment — seconds, effortless).</li>
+<li><strong>It must be run</strong> (your moment — here the real world enters: your folders, your network, your bad luck).</li>
+<li><strong>It must be relied on</strong> (a later moment — when it <em>matters</em>, e.g., it runs overnight, unwatched, on data you didn't back up).</li>
+</ol>
+<p>The AI can never perform steps 2–3. This is why the phrase "it works on my end" is literally meaningless in an AI's mouth — a chapter 3 topic — and why Chapter 5's philosophy is: <strong>the moment code meets actual reality is the only moment that counts.</strong></p>
+<h2 id="the-four-reader-questions">The four reader questions</h2>
+<p>Every script can be interrogated with four questions. You can't answer them perfectly on first glance, but even a half-answer flags 80% of the trouble a script can cause:</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>What it uncovers</th>
+<th>Where in the code to look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. What does it take in?</strong></td>
+<td>Inputs: files it reads, things you type with flags/arguments, network calls it makes</td>
+<td>The start; <code>open(</code>, <code>input(</code>, <code>sys.argv</code>, <code>requests.</code></td>
+</tr>
+<tr>
+<td><strong>2. What does it change?</strong></td>
+<td>What it creates or alters: renames, writes, database edits</td>
+<td>The middle; <code>open(…, "w")</code>, <code>$file &gt;</code>, <code>.write(</code>, <code>rename</code>, <code>commit</code></td>
+</tr>
+<tr>
+<td><strong>3. What does it touch outside itself?</strong></td>
+<td>The boundaries where dangerous stuff lives — deletes, sends, emails, uploads, shell-outs</td>
+<td>DANGER WORDS. Chapter 2 gives you the exact list</td>
+</tr>
+<tr>
+<td><strong>4. When does it stop?</strong></td>
+<td>Whether it knows how to stop gracefully — and whether loops have safety valves</td>
+<td>"while" loops, missing <code>if</code> conditions, missing maximums</td>
+</tr>
+</tbody>
+</table>
+<p>Chapter 2 turns these into an actual 10-minute reading method. But keep the questions around; they're the reason a non-coder <em>can</em> read code: you're not reading for grammar, you're reading for <strong>power and boundaries</strong>. Power = what it can do. Boundaries = what limits that power. Dangerous code is, almost always, code with lots of power and few obvious boundaries.</p>
+<h2 id="you-dont-need-to-read-it-all">You don't need to read it all</h2>
+<p>The most liberating sentence in this chapter might be this: <strong>nobody fully reads code either.</strong> Professional programmers skim constantly, selectively, and strategically — reading just enough of the right parts to answer <em>the four questions above and the specific new risk on the table.</em> The AI-generated 200-line script someone hands you? You will read roughly 10% of it carefully: the countryside around imports, file names, loops, and any danger words. The rest — the beautiful formatting of the HTML it generates, the long lists of test data — gets skimmed.</p>
+<table>
+<thead>
+<tr>
+<th>Reading pass</th>
+<th>Time</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Structure pass</strong></td>
+<td>2 minutes</td>
+<td>Names of the file(s), function names, comments. What is this <em>for</em>? Does the shape match the promise?</td>
+</tr>
+<tr>
+<td><strong>Power pass</strong></td>
+<td>3 minutes</td>
+<td>Imports, <code>for</code> loops, and any DANGER WORDS from the table in Chapter 2</td>
+</tr>
+<tr>
+<td><strong>Boundary pass</strong></td>
+<td>5 minutes</td>
+<td>For each contact point with your world: does it ask first? check first? have limits? refuse the dangerous version?</td>
+</tr>
+</tbody>
+</table>
+<p>Ten minutes, twice. That's a full non-coder review. Chapter 9 walks one script through it step by step.</p>
+<h2 id="when-i-cant-read-code-stops-being-true">When "I can't read code" stops being true</h2>
+<p>A friendly note, since this book is written for people who self-describe that way: after years of teaching beginners, the honest observation is that practically no one <em>can't</em> read code. Plenty of people <em>believe</em> they can't because they've been shown code through the wrong lens — the lens of "understand every line" (which fails, and always would) instead of "understand what it does to me and my files" (which anyone can achieve in ten minutes per script).</p>
+<p>Reading code is closer to reading a rental agreement than reading a novel. You're not there to admire the prose. You're there to scan clause by clause, find the ones that can legally hurt you, and refuse anything that doesn't come with a way out. That skill is learnable, teachable, and — given one morning and this book — fully inside your capability.</p>
+<p>Let's get you the exact method.</p>
+<hr /></section><hr><section id="ch-2-02-reading-code-you-cannot-write"><h1>Chapter 2 — Reading Code You Cannot Write</h1><p>Chapter 1 gave you the mental model: code is a recipe for a literal-minded cook, and reading means scanning for <strong>power and boundaries</strong>. This chapter gives you the actual method — a ten-minute, three-pass way to read any AI-written script without being able to write one.</p>
+<p>Before the method, one mindset reset. People who "can't program" tend to open a code file and feel the same dread as opening a book in a language they don't speak. But code has a superpower natural language doesn't: <strong>it's readable backwards, in any order, one part at a time.</strong> You can start in the middle, find one clause you understand, and grow out from there. There's no plot to lose. Enter anywhere, exit anytime.</p>
+<h2 id="pass-1-the-structure-pass-2-minutes">Pass 1: The structure pass (2 minutes)</h2>
+<p>You're not reading yet — you're <em>mapping</em>. Scan top to bottom and collect, on a sticky note or in a comment at the top of your notes:</p>
+<p><strong>Files, and what they claim to be.</strong> The file name itself is data. <code>rename_photos.py</code> promises one thing; <code>backup_and_email_and_delete.py</code> promises four things. Multi-promise scripts get extra suspicion; single-promise scripts get slightly less.</p>
+<p><strong>The comments at the top.</strong> AI-written scripts usually open with a header comment block explaining usage. Read it — but read it as a <em>claim</em>, not a description. The comment was written by the same confident author whose claims we'll audit in Chapter 3. Header comments often genuinely lie by omission: they say what a script does, not what <em>changes</em> it makes.</p>
+<p><strong>The function names.</strong> Functions are the script's table of contents. Just reading them in order usually tells you the story:</p>
+<table>
+<thead>
+<tr>
+<th>Function sequence</th>
+<th>The story it tells you before reading a single body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>find_files</code>, <code>parse_dates</code>, <code>build_new_name</code>, <code>rename_safely</code>, <code>main</code></td>
+<td>Takes files, works out new names aligned to dates, renames with a safety emphasis. Coherent.</td>
+</tr>
+<tr>
+<td><code>load_config</code>, <code>connect</code>, <code>fetch_all</code>, <code>transform</code>, <code>push_to_remote</code>, <code>cleanup</code></td>
+<td>Reads settings, goes to the network, fetches data, changes it, sends it somewhere else, then "cleans up" — and cleanup is exactly the kind of vague word that hides deletes. Be more suspicious.</td>
+</tr>
+<tr>
+<td><code>obfuscate</code>, <code>encode_payload</code>, <code>do_request</code>, <code>decode_response</code></td>
+<td>A network thing that hides what it's sending. Anytime "encode/obfuscate" appears without an obvious honest purpose, stop and question.</td>
+</tr>
+</tbody>
+</table>
+<p>Naming honesty is a real signal. An AI-generated script with a function called <code>rename_safely</code> might still not rename safely — functions can be ignorantly or aspirationally named — but it's <em>more</em> likely than one named <code>do_it</code>. More importantly, a name like <code>push_to_remote</code> is a <strong>boundary marker</strong>: it names a part of your world (somewhere remote) the script will touch.</p>
+<h2 id="pass-2-the-power-pass-3-minutes">Pass 2: The power pass (3 minutes)</h2>
+<p>Now read for four specific kinds of lines. You're allowed to skip everything else.</p>
+<p><strong>1. Imports — who is it borrowing power from?</strong></p>
+<table>
+<thead>
+<tr>
+<th>Import you'll see</th>
+<th>What power it grants</th>
+<th>Read it as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>os</code>, <code>shutil</code>, <code>pathlib</code>, <code>Path</code></td>
+<td>Files and folders — the cook's hands</td>
+<td>"This touches my files."</td>
+</tr>
+<tr>
+<td><code>requests</code>, <code>urllib</code>, <code>httpx</code>, <code>fetch</code>/<code>axios</code> (JS)</td>
+<td>The internet — sends and downloads</td>
+<td>"This talks to the outside world."</td>
+</tr>
+<tr>
+<td><code>subprocess</code>, <code>child_process</code>, <code>exec</code>, <code>spawn</code></td>
+<td>Runs <em>other programs</em></td>
+<td>"This can do literally anything the Other Program can do."</td>
+</tr>
+<tr>
+<td><code>smtplib</code>, <code>email</code>, <code>nodemailer</code></td>
+<td>Sends email</td>
+<td>"This sends mail as me."</td>
+</tr>
+<tr>
+<td><code>json</code>, <code>csv</code>, <code>sqlite3</code>, <code>database</code></td>
+<td>Reads/writes structured data, maybe databases</td>
+<td>"This changes data records, not just files."</td>
+</tr>
+<tr>
+<td><code>schedule</code>, <code>time.sleep</code> in loops, <code>threading</code></td>
+<td>Runs over time / in parallel</td>
+<td>"This doesn't necessarily end when I expect."</td>
+</tr>
+<tr>
+<td><code>crypt</code>/<code>bcrypt</code>/<code>hashlib</code> with no clear reason</td>
+<td>Password or credential handling</td>
+<td>Red flag. Why does a photo-renamer need this?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. Loops — what is it doing once for <em>every</em> thing?</strong></p>
+<p><code>for</code> loops are where scripts scale up their effect. "Rename 3 files" and "rename 30,000 files" can be the <em>same line of code</em>. Find each loop and ask: over what collection, and is the range what I'd expect? A silent classic: a loop over <code>os.listdir(".")</code> — which includes files you forgot exist, plus system clutter the script will now chew on.</p>
+<p><strong>3. Conditions — what are its safety valves?</strong></p>
+<p><code>if</code> statements are the script's boundaries. For each loop or destructive action, look uphill: is there a check that says "this thing exists," "this thing isn't empty," "this thing matches what I expect"? A script whose dangerous line has an <code>if</code> guarding it is infinitely tamer than the same dangerous line with nothing above it. Beginners should learn to <em>spot the void</em>: a destructive line standing naked in the code, nothing between it and execution.</p>
+<p><strong>4. Danger words — the specific classics.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Danger word</th>
+<th>Typical meaning</th>
+<th>Why non-programmers should know it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>remove</code>, <code>unlink</code>, <code>os.remove</code>, <code>del</code></td>
+<td>Deletes a file — gone, no undo, no trash</td>
+<td>The cook doesn't use a trash can.</td>
+</tr>
+<tr>
+<td><code>rmtree</code>, <code>shutil.rmtree</code>, <code>rm -rf</code></td>
+<td>Deletes a folder <strong>and everything inside it</strong></td>
+<td>Nuclear. Chapter 7.</td>
+</tr>
+<tr>
+<td><code>"w"</code> mode, <code>open(f, "w")</code>, <code>WriteAllText</code></td>
+<td><strong>Overwrites</strong> a file with new content</td>
+<td>Old contents replaced forever.</td>
+</tr>
+<tr>
+<td><code>write()</code> on an existing file (JS/Go-style), <code>&gt;</code> in shell</td>
+<td>Same as above, different costume</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subprocess</code>, <code>os.system</code>, backticks in shell code</td>
+<td>Runs another program with these words as arguments</td>
+<td>Bugs here can become arbitrary commands run as you.</td>
+</tr>
+<tr>
+<td><code>requests.post</code>, <code>fetch(url, {method: "POST"})</code></td>
+<td>Sends data somewhere over the network</td>
+<td>Where to? That's a question for Chapter 3/4.</td>
+</tr>
+<tr>
+<td><code>curl</code> piped into <code>bash</code> or <code>sh</code> (download-and-run in one line)</td>
+<td>Downloads a script and runs it <em>immediately</em></td>
+<td>The single most "trust me" pattern in existence.</td>
+</tr>
+<tr>
+<td><code>chmod</code>, <code>sudo</code>, <code>Authorization: Bearer</code></td>
+<td>Changes permissions / does privileged things / sends a credential</td>
+<td>Chapter 7 twice.</td>
+</tr>
+<tr>
+<td><code>.env</code>, <code>config</code>, <code>password</code>, <code>token</code>, <code>api_key</code></td>
+<td>Credential-adjacent words anywhere</td>
+<td>Instant Chapter 7 reading pass.</td>
+</tr>
+<tr>
+<td><code>git push --force</code>, <code>rm -rf .git</code></td>
+<td>Rewrites or destroys your version history</td>
+<td>Refuse automatically.</td>
+</tr>
+</tbody>
+</table>
+<p>You do not need to memorize this table to use this book; you need to <em>skim with it in mind</em>, and let Chapter 10's checklist remind you. Pro readers google unknown words rather than skip them — and if an AI is beside you (OpenCode, ChatGPT, etc.), the fastest move is: <strong>"What does this exact line do? What's the worst realistic thing it could do?"</strong> — no shame in that, ever. The AI can't read your mind, but it <em>can</em> annotate its own work; using it for that is Chapter 4's job.</p>
+<h2 id="pass-3-the-boundary-pass-5-minutes">Pass 3: The boundary pass (5 minutes)</h2>
+<p>Now you read, slowly, only the <strong>contact points</strong> — the places where the script touches Anything That Exists:</p>
+<ol>
+<li><strong>Every file it might open, write, rename, or delete.</strong> Trace each one: is the name hard-coded (<code>"photos"</code>) — which is brittle but predictable — or assembled from something flexible? Where does the flexible part come from: your typing, a config file, an AI guess?</li>
+<li><strong>Every network send.</strong> What data goes where, and is the destination a name you recognize and approve?</li>
+<li><strong>Every external program it runs.</strong> A script that shells out to <code>rclone</code>, <code>git</code>, <code>ffmpeg</code>, or <code>node</code> inherits <em>all</em> of those programs' powers. You should know which ones and why.</li>
+<li><strong>Endings.</strong> Does the script end when you'd expect? Or does it loop forever / run on a schedule / wait for more work? Anything that "doesn't necessarily stop" needs an extra look at Chapter 5 (the run-twice rule).</li>
+</ol>
+<p>For each contact point, run a small three-question audit:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does it <strong>check first</strong>? (Does the code verify the thing exists, is non-empty, matches expectations, <em>before</em> acting?)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does it <strong>ask me first</strong>? (For anything irreversible: does the script prompt — or at minimum support a dry-run — or just act?)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does it <strong>limit itself</strong>? (Loops bounded? Files restricted to one folder? Sizes capped? Retries limited?)</li>
+</ul>
+<p>Three yeses = a well-bounded script. Two or fewer = you found exactly where to point your Chapter 4 questions. This is the whole reader's game: <strong>notice where the power is, then check whether anyone built fences around it.</strong></p>
+<h2 id="what-to-do-when-you-hit-something-you-truly-dont-understand">What to do when you hit something you truly don't understand</h2>
+<p>You will, often. Three moves, in order:</p>
+<ol>
+<li><strong>Note it and keep scanning.</strong> Non-programmers' biggest reading mistake is <em>bailing out at the first hard line</em>, as if reading requires total comprehension. It doesn't. Exit and reenter; mark it <code>?</code> and move on. Many "?"s resolve themselves from context two paragraphs later.</li>
+<li><strong>Ask your AI to explain <em>that exact line</em>, like this:</strong> "Explain line 14 like I've never programmed. What does it do? Worst realistic thing it could do? Is there a safer version?" Asking <em>per line</em> works much better than asking "explain this whole file" (the answer will be confident, generic, and too long). Line-by-line keeps the AI honest.</li>
+<li><strong>If it still doesn't resolve: it goes on the risk list.</strong> Anything you don't understand <em>as a reader</em> is, by definition, a boundary whose power you haven't assessed — treat it as a candidate risk, and let Chapter 4 turn your list into pointed questions before you ever run anything.</li>
+</ol>
+<h2 id="one-warning-about-reading-ai-code-that-reads-fine">One warning about reading AI code that reads "fine"</h2>
+<p>AI-written code is usually <em>beautiful</em>. Consistent spacing, nice function names, friendly comments, tidy structure. It doesn't look like a beginner's chaos; it looks like a senior engineer's prose. This is a trap worth naming in plain terms: <strong>looks-professional and works-safely are different axes.</strong> Beautiful code with no error handling will crash the same way ugly code would; a confidently commented script can still hard-code a wrong path. In Chapter 3 we'll target the <em>claims</em> made about beautiful code; here, just stamp this on your brain: <strong>style is not safety.</strong> You're reading for power and fences, not for elegance.</p>
+<hr /></section><hr><section id="ch-3-03-spotting-trust-me-moments"><h1>Chapter 3 — Spotting the &quot;Trust Me&quot; Moments</h1><p>Somewhere in every AI-assisted project there comes a moment when the confident voice says something like:</p>
+<blockquote>
+<p>"This will work — I've handled the edge cases. Just run it."</p>
+</blockquote>
+<p>That sentence is the <strong>"trust me" moment.</strong> Not because the AI is lying — it isn't, it's usually <em>sincere</em> — but because it can't know. It cannot see your folders. It cannot run anything, ever, anywhere. It has no memory of last week's broken attempt. Every claim it makes about code "working" is a prediction about a world it has never touched, delivered in the confident tone of someone who has.</p>
+<p>This chapter teaches you to hear that tone. Not to distrust AI generally — it's a phenomenal, mostly-reliable assistant — but to react to confidence the way experienced computer people do: <strong>confidence is interesting information; it is not evidence.</strong></p>
+<h2 id="why-the-ai-sounds-so-sure">Why the AI sounds so sure</h2>
+<p>Generative models are trained to produce <em>likely-sounding text</em>. When you ask "will this work?", the statistically likely answer is an assured one, the same way autocomplete completes "Thanks so mu—" with "ch!" Look at what the AI is without anthropomorphizing it: a master of <em>the shape confidence takes in text</em>. It will produce shape-confidence even about things that fail immediately when run.</p>
+<p>Three deep reasons AI claims are weaker than they sound:</p>
+<table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>The plain-English version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>It has never executed anything</td>
+<td>It can't get a runtime error, watch a crash, or discover a typo. It uses languages it has only ever <em>read</em>.</td>
+</tr>
+<tr>
+<td>It doesn't know your machine</td>
+<td>Your folders, your filenames, your half-converted backups, your Windows quirks — absent from its world unless a previous message said so.</td>
+</tr>
+<tr>
+<td>It predicts <em>plausible</em>, not <em>true</em></td>
+<td>"It works!" is plausible-sounding and gets generated even if the code contains an obvious bug. Plausibility is the currency; truth must be supplied by you.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="phrase-by-phrase-decoder">Phrase-by-phrase decoder</h2>
+<p>Treat these as five-second reactions: notice the phrase, file the message under "needs a specific check." Phrases are ordered roughly by frequency.</p>
+<table>
+<thead>
+<tr>
+<th>The AI says</th>
+<th>What it can actually mean</th>
+<th>What you respond</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Just run this."</td>
+<td>"I wrote something."</td>
+<td>"Not yet — walk me through what it touches, then I'll dry-run it."</td>
+</tr>
+<tr>
+<td>"I've tested it / it works"</td>
+<td>"I believe it works." (It cannot have any test evidence.)</td>
+<td>"Show me exactly how to test it, step by step, and what output to expect."</td>
+</tr>
+<tr>
+<td>"This is safe."</td>
+<td>"This is safe <em>for a file layout I imagined</em>."</td>
+<td>"What's the worst thing it does if a file is missing / named weird / already up to date?"</td>
+</tr>
+<tr>
+<td>"I've handled the edge cases"</td>
+<td>"I can list plausible edge cases."</td>
+<td>"List the edge cases you handled, then the three you <em>didn't</em>."</td>
+</tr>
+<tr>
+<td>"It's fine on my end"</td>
+<td>Nothing. There is no end.</td>
+<td>(Silently note it; move to Chapter 5.)</td>
+</tr>
+<tr>
+<td>"Don't worry about that warning."</td>
+<td>"The warning is one I see often."</td>
+<td>"Explain the warning in plain words. I'll paste it if it shows for me."</td>
+</tr>
+<tr>
+<td>"Should work now." (after a fix)</td>
+<td>"I changed something."</td>
+<td>"Great — what changed, and how do I re-test the same way?"</td>
+</tr>
+<tr>
+<td>"You don't need to back anything up for this."</td>
+<td>A guess about your pain tolerance</td>
+<td>"I'm backing up regardless. Where should the snapshot live?"</td>
+</tr>
+<tr>
+<td>"This minimal version is temporary, we'll harden it later"</td>
+<td>Next week never comes</td>
+<td>"Fine — but what does the temporary version refuse to touch?"</td>
+</tr>
+<tr>
+<td>"Error X is harmless."</td>
+<td>"Error X is common."</td>
+<td>"Common <em>when</em>, on what setup? What should I do if mine persists?"</td>
+</tr>
+</tbody>
+</table>
+<p>Notice the pattern in the responses: <strong>they all convert a feeling into a test.</strong> The decoder's whole philosophy: never accept a claim about the future when you can turn it into a check about the present.</p>
+<h2 id="trust-me-code-patterns-the-ones-without-words">Trust-me code patterns (the ones without words)</h2>
+<p>Some trust-me moments hide inside the <em>code itself</em>, no confident sentence needed. Memorizing these shapes is high-yield — they're the classic "worked perfectly in the demo, destroyed my Tuesday in practice" patterns.</p>
+<table>
+<thead>
+<tr>
+<th>Code/command shape</th>
+<th>Trust-me-ness</th>
+<th>Why it deserves a second look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deletes before creating (<code>rm</code>, <code>del</code>, <code>rmtree</code>, then regenerate)</td>
+<td>High</td>
+<td>If the regenerate fails halfway, you're left with <em>fewer</em> files than before. Correct version: build the new thing fully first, then swap.</td>
+</tr>
+<tr>
+<td>Downloads-and-runs in one line (<code>curl</code> piped into <code>bash</code>/<code>sh</code>, or <code>.sh</code>/<code>.ps1</code> scripts fetched and executed)</td>
+<td>The max</td>
+<td>You skipped every safety layer this book has. Refuse, or download first, read briefly, run in a sandbox copy.</td>
+</tr>
+<tr>
+<td>Overwrites existing files (<code>open(x, "w")</code>, <code>&gt;</code> redirection, <code>WriteAllText</code>) without a "does it exist?" check</td>
+<td>High</td>
+<td>The old version of your file is being silently replaced forever.</td>
+</tr>
+<tr>
+<td><code>git push --force</code> / force flags anywhere</td>
+<td>Very high</td>
+<td>"Trust me" aimed not at files but at your <em>history</em>. Refuse unless you personally understand exactly why.</td>
+</tr>
+<tr>
+<td>Long, clever "one-liners" accomplishing many things</td>
+<td>Medium-high</td>
+<td>Compact = hard to read = your reader's method can't see boundaries. Ask for the boring twelve-line version.</td>
+</tr>
+<tr>
+<td>Code that pipes your <strong>project contents</strong> into the network (uploading before asking)</td>
+<td>Very high</td>
+<td>Chapter 7's domain; a trust-me moment with your secrets attached.</td>
+</tr>
+<tr>
+<td>Anything with a comment saying <code># TODO: add error handling</code></td>
+<td>Explicit</td>
+<td>The boundary it will need (Chapter 2) is openly missing.</td>
+</tr>
+<tr>
+<td>Scheduled/background execution (<code>cron</code>, <code>while True:</code>, "watcher", <code>--daemon</code>)</td>
+<td>High</td>
+<td>Runs when you're not watching. The inverse of the copy-run-rollback philosophy.</td>
+</tr>
+<tr>
+<td>Changes many files in one pass ("batch," "bulk," "all files in")</td>
+<td>High</td>
+<td>Destructive scale. The right version has a <code>--limit 3</code> for a rehearsal (Ch 5).</td>
+</tr>
+</tbody>
+</table>
+<p>Two classics deserve their own paragraphs because they're so common.</p>
+<p><strong>The delete-then-recreate pattern.</strong> An AI writes <code>git</code> workflows, build scripts, and cache-cleanup scripts this way constantly: remove the old thing, then re-make it. In the AI's imagined world the second half always succeeds. On your Tuesday the second half fails — network hiccup, typo'd path, a file already open in another program — and now you have deleted your originals <em>and</em> have no replacements. The ask that fixes it: <strong>"Rewrite so nothing is deleted until its replacement fully exists and is verified. Then delete the old one."</strong> That request is so useful it has a folk name in our house: "no-gap version."</p>
+<p><strong>The perfect-world input assumption.</strong> The script reads <em>one</em> file. Not zero. Not two. Format exactly as imagined: field names spelled right, dates consistent, headers present. Then it meets your actual CSV where someone typed the date three different ways and one row is empty. The failure mode isn't just a crash — it's a <em>silent</em> drift: the script skips rows, or honestly processes 97 of 100 without telling you which. The ask that fixes it: <strong>"Before doing real work, verify the input: right file, right columns, non-empty, and report how many rows you'll process — then compare with how many you did."</strong></p>
+<h2 id="the-ai-repeated-my-own-mistake-moment">The AI repeated-my-own-mistake moment</h2>
+<p>A special trust-me worth naming. When you paste your own broken attempt (or the previous AI's answer) into a chat and the new answer confidently copies its assumptions — the wrong path, the wrong column name, the invented library — the new answer inherits those bugs with total confidence. Signs: the answer starts "Great code!" or "Your approach is basically right" — then keeps your bug intact. Fixes: include the <em>original goal</em>, not just the broken code ("I wanted X; this claims X; here's the full error"); and when correcting a previous failure, explicitly restate what reality was ("the folder is named <code>photos</code> not <code>Photos</code>").</p>
+<h2 id="what-a-real-trust-me-escape-looks-like">What a real "trust me" escape looks like</h2>
+<p>Watch the move happen — the moment where a beginner's instinct beats a confident tone. Scenario: you ask for a script that resizes images. The AI answers with beautiful code and says "This handles everything — just replace the folder path and run it."</p>
+<p>Your instinct: <em>"everything" — the word "everything" is doing a lot of work there.</em></p>
+<p>The escape, in 45 seconds of typing:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "What does 'everything' include, specifically? What are three things it does <em>not</em> handle?"</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "What folder does it write the new images to — same folder, new subfolder, or does it delete the originals?"</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Is there a mode that processes exactly three images as a rehearsal so I can eyeball them before running the rest?"</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "If a file in the folder is corrupt or uninstall-sized, does it crash, skip, or stop the whole batch?"</li>
+</ul>
+<p>That's not professional paranoia; that's four cheap questions that take less time than the confident answer took to generate. Chapter 4 turns this instinct into a full playbook. For now, keep the sentence: <strong>listen for the confident verbs; answer them with specific, small, ever-so-slightly skeptical questions.</strong></p>
+<h2 id="the-honest-baseline-most-ai-code-is-fine">The honest baseline: most AI code is fine</h2>
+<p>It's easy to read this chapter as paranoia. It isn't. The majority of small scripts an AI writes for simple file tasks are <em>fine</em> — and the trust-me habits in this book are what let you say that with your own eyes instead of a leap of faith. You're not becoming a skeptic; you're becoming a <strong>calm verifier</strong> — somebody whose confidence comes from tests run, not vibes received. That disposition will serve you far beyond this book's subject.</p>
+<p>Next up: turning that disposition into the exact questions to ask.</p>
+<hr /></section><hr><section id="ch-4-04-asking-what-could-break"><h1>Chapter 4 — Asking What Could Break</h1><p>Chapter 3 trained your ear for over-confidence. This chapter gives you the <em>questions</em> — a playbook of asks that, used before running anything, will catch most of what can go wrong. It's structured as a conversation you can have with your AI in a few minutes. The questions are also useful, with light adaptation, for a friend or nephew who wrote you a script: the goal is precise communication about risk, not interrogation.</p>
+<p>Two framing ideas before the list.</p>
+<p><strong>First: breakage is a <em>planning</em> question, not a <em>code</em> question.</strong> Asking an AI mid-task "will this break?" tends to produce reassurance ("I've handled that"). Asking <em>before</em> it writes ("before you write it — what could this break?") produces genuinely useful analysis, because the answer shapes the plan rather than defending a finished product. Ask early. Ask as design, not audit.</p>
+<p><strong>Second: you are not Looking for no; you're looking for specifics.</strong> An answer like "we should handle missing files" is a <em>specific</em> — it names a failure and implies a guard. An answer like "it's robust" is a <em>vibe</em> — note it and re-ask. The quality bar for this chapter's questions is: <strong>nameable failure, nameable guard.</strong></p>
+<h2 id="the-opening-move-the-pre-mortem">The opening move: the pre-mortem</h2>
+<p>Before the AI writes anything, ask the question this chapter is named for:</p>
+<blockquote>
+<p>"Before you write it — what could this break? Walk me through the ways this could go wrong on my machine, in plain English. Then decide what to do about each."</p>
+</blockquote>
+<p>This is called a <strong>pre-mortem</strong>: imagine the project already failed, then ask why. People love the phrase because it works: it converts vague anxiety into a list. Expect the first answer to be short (AIs front-load one or two risks). Then pull the thread with, one at a time:</p>
+<ul>
+<li>"Which of those risks is the <em>most</em> expensive to fix after it happens?"</li>
+<li>"What's a risk you didn't list because you assumed I'd never hit it?"</li>
+<li>"For each, what would I <em>notice</em> on my end if it happened — a crash, a weird filename, or silent wrongness?" (Silent wrongness is the expensive category. It's what Chapter 5 is really about.)</li>
+</ul>
+<p>You'll usually get a shortlist of 3–5 real risks. <strong>You are not expected to fix them.</strong> You carry them into Chapter 5 as the checklist of "things I'll watch in the test run." That's the whole loop: <em>ask early, turn risks into things-to-notice.</em></p>
+<h2 id="the-core-question-set">The core question set</h2>
+<p>These eight questions cover most scripts, most failure modes, and take maybe three minutes of typing. They're ordered not by importance but by conversation flow — like a small interview.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ask this</th>
+<th>What you're really asking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>"What files and folders will this <strong>read</strong>, and what will it <strong>change</strong>? List them, including any subfolders."</td>
+<td>Scope. If the list surprises you, the plan is wrong before code exists.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>"Can it run in a <strong>mode that changes nothing</strong> — a dry run or plan-only mode?"</td>
+<td>The rehearsal option. If "no," ask for it now (Ch 5's cornerstone).</td>
+</tr>
+<tr>
+<td>3</td>
+<td>"If I run it <strong>twice in a row</strong>, does it do something wrong the second time — copy twice, duplicate, corrupt?"</td>
+<td>Whether it's repeatable. Accidental double-runs are the most common how-did-this-break story in real life.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>"What happens if the <strong>network is down</strong> halfway through?"</td>
+<td>Whether the failure is graceful (stop, tell you, leave things as they were) or messy (half-changed everything).</td>
+</tr>
+<tr>
+<td>5</td>
+<td>"What happens if an <strong>input file is empty, missing, or misnamed</strong>?"</td>
+<td>The perfect-world-assumption check from Chapter 3.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>"How do I <strong>undo</strong> this? Exactly what does rollback look like?"</td>
+<td>The escape hatch. If the honest answer is "you can't," the design changes before code is written.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>"Does it need any <strong>secrets</strong> — keys, tokens, passwords — and if so, where do I put them?"</td>
+<td>Chapter 7's territory, asked up front instead of discovered in the code.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>"What's the <strong>simplest version</strong> that still does the job — no extra features?"</td>
+<td>Scope discipline. Every extra feature is extra read-time, extra test-time, extra risk.</td>
+</tr>
+</tbody>
+</table>
+<p>Question 6 deserves a moment of resonance: <em>undo as a design requirement, not an afterthought.</em> A script whose rollback story is "restore from your backup" is fine <em>if</em> you have a backup — that's Chapter 6's job. But many scripts can have better undo for free: writing outputs to a new folder instead of in place, a <code>--dry-run</code> default, a rename batch written to a log first. Asking "how do I undo it" <em>first</em> is the single highest-value question in this list, because it moves undo from hope into design.</p>
+<h2 id="question-drills-for-specific-moments">Question drills for specific moments</h2>
+<p>Beyond the core set, here are pointed asks for situations you'll recognize.</p>
+<p><strong>When the AI proposes something you didn't ask for:</strong></p>
+<blockquote>
+<p>"I asked for X. What did you add beyond X, and why? Can I have the version with only X?"</p>
+</blockquote>
+<p>Almost every AI answer includes unsolicited cleverness — retries, parallelism, caching, logging frameworks. Some are genuinely helpful; some are read-time you don't want. Choose consciously.</p>
+<p><strong>When you're about to run something for the first time on real data:</strong></p>
+<blockquote>
+<p>"You've never seen my actual folder. What are the three things most likely to be different from what you assumed? What should I check <em>before</em> running?"</p>
+</blockquote>
+<p>This question produces gold surprisingly often — the AI knows exactly what it assumed, and listing its assumptions briefly forces those assumptions into the open where you can compare them to reality.</p>
+<p><strong>When something works and you're about to rely on it:</strong></p>
+<blockquote>
+<p>"Before I rely on this weekly, stress it: what input, timing, or environment would break it? Is there a small test I can run each time to confirm it's healthy?"</p>
+</blockquote>
+<p>This is how Chapter 5's "health checks" are born — the five-second test you rerun forever after.</p>
+<p><strong>When a fix fails twice:</strong></p>
+<blockquote>
+<p>"We've tried twice and it keeps failing. Stop patching. Re-look at the <em>problem</em>: what's the likely real cause, and what's the simplest script that avoids it entirely?"</p>
+</blockquote>
+<p>Two failed patches usually mean the <em>design</em> is fighting reality, not the code. Ask for a rethink, not fix number three.</p>
+<p><strong>When code does something you can't explain (the Chapter 2 "?"):</strong></p>
+<blockquote>
+<p>"Line 14 — explain like I've never programmed, in one paragraph: what does it do, why is it here, what's the worst realistic thing it could do, and is there a safer version?"</p>
+</blockquote>
+<h2 id="getting-the-ai-to-write-the-checklist-for-you">Getting the AI to write the checklist <em>for</em> you</h2>
+<p>A trick worth its own section because it doubles your leverage. After the AI finishes a task, instead of you inventing tests, ask:</p>
+<blockquote>
+<p>"Write me a short testing checklist for what you just built: what a healthy run looks like, three edge cases to try on purpose, and one 'rollback drill' to prove I can undo it. Keep it to one page, plain English."</p>
+</blockquote>
+<p>You get four things free: the healthy-run definition — protecting against the silent-nothing failure — deliberate edge cases instead of accidental ones, an undo practice, and a <em>re-readable document</em> for next time (file it next to your script; Chapter 6's snapshot habit pairs beautifully with it).</p>
+<p>Use the same trick on the <em>risks</em> side, at the very start:</p>
+<blockquote>
+<p>"Before writing code: list the top 3 ways this could break, each with the plain-English symptom I'd notice, and one guard you'll build in."</p>
+</blockquote>
+<p>That's the pre-mortem with built-in alarms. Keep both lists; they'll be your Chapter 5 test plan almost word for word.</p>
+<h2 id="when-its-not-an-ai-applying-the-playbook-to-people">When it's not an AI — applying the playbook to people</h2>
+<p>Half of this playbook transfers, word for word, to asking a human friend or colleague about their code. What changes is <em>tone</em>: with a person, soften ("walk me through" → "can you remind me," "what could this break" → "what are you worried about?"). The conversational moves — ask early, ask for specifics, ask about undo, ask for the simplest version — work identically on people; often better. A good rule from years of tutoring humans: <strong>a beginner's sincere question is never a burden. If someone acts like it is, find a different mentor.</strong></p>
+<h2 id="a-worked-mini-conversation">A worked mini-conversation</h2>
+<p>From a real session, compressed. You asked for a script that backs up your writing folder to a <code>backups</code> subfolder, once a day, keeping the last 7 copies.</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <em>Pre-mortem first:</em> "Before you write it — what could this break, in plain English, and what will you do about each?"
+  → The AI lists: wrong folder path; disk filling up; backup <em>deleting</em> existing backups incorrectly; silently backing up zero files. Guards: verify source exists, check free space, name backups with today's date, log the count of files backed up.
+  → Notice item three: "deleting existing backups." A backup routine that touches <em>old</em> backups is exactly the delete-before-create trap from Chapter 3. Your questions found it before a single line was written.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Run-twice check?" → Confirms two same-day runs are safe (same filename, overwrite same-day copy only).</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Undo?" → "Delete today's backup file; originals are never touched." Good boundary story.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Secrets?" → None needed. (Checked anyway, Chapter 7 habits.)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Simplest version?" → Drops parallel copying, adds logging; file copied count remains.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Testing plan requested → "Back up a scratch folder of 5 fake files; then back up again same day and confirm one file, not two; then disconnect the source folder and confirm it <em>refuses loudly</em> rather than backing up nothing."</li>
+</ul>
+<p>Ten minutes, and every risk in the room has been named, guarded, and has an alarm you'll actually see. That's the difference between hoping code works and being the person in charge of it.</p>
+<h2 id="the-one-sentence-version">The one-sentence version</h2>
+<p>If you take one reflex away: <strong>before code exists, ask what could break and how you'd notice; after code exists, ask what to rehearse and how to undo.</strong> Everything else in this book is the discipline of doing that on purpose.</p>
+<hr /></section><hr><section id="ch-5-05-testing-before-you-rely-on-it"><h1>Chapter 5 — Testing Before You Rely on It</h1><p>You've read the code (Chapter 2), heard the trust-me claims (Chapter 3), and gotten the risk list (Chapter 4). Now comes the step that actually earns your confidence: <strong>running the thing — carefully.</strong> This chapter is the linker between "code that exists" and "code I can rely on," and it's built around one sentence: <strong>test in a classroom, not the kitchen.</strong> You never want a first-ever run aimed at files you care about. Practice on the copies and the fakes; build confidence cheaply; <em>then</em> aim it at the real thing.</p>
+<h2 id="the-playground-habit">The playground habit</h2>
+<p>Create a <strong>playground folder</strong> — a scratch copies-area for rehearsal runs — outside your real data. Name it something unmistakable, like <code>00-playground</code>. Inside it, build small fakes that imitate your real situation badly <em>on purpose</em>:</p>
+<table>
+<thead>
+<tr>
+<th>Fake to include</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A copy of 3—5 real files (copies — copies, as Chapter 6 will hammer)</td>
+<td>The closest thing to the real test, run on real data without risk.</td>
+</tr>
+<tr>
+<td>One <strong>empty file</strong></td>
+<td>Catches the perfect-world assumption (Ch 3).</td>
+</tr>
+<tr>
+<td>One file with a <strong>long or odd name</strong> (<code>IMG_2026-??-01 (final) (final)v2.jpg</code> — spaces, parentheses, symbols)</td>
+<td>Filenames break more scripts than any other cause.</td>
+</tr>
+<tr>
+<td>One file whose type the script <strong>surely didn't expect</strong> (a <code>.txt</code> in your photo folder)</td>
+<td>Finds out whether it skips gracefully or crashes.</td>
+</tr>
+<tr>
+<td>One <strong>duplicate</strong> (same content, two names, or the same name twice in different subfolders)</td>
+<td>Catches overwrite and dedupe bugs.</td>
+</tr>
+</tbody>
+</table>
+<p>Five minutes of setup, used forever. Every script you ever get from an AI gets its first run here, before it ever meets <code>/photos</code>. Bonus: a playground is exactly where the walkthrough in Chapter 9 does its first run.</p>
+<h2 id="the-dry-run">The dry run</h2>
+<p>A <strong>dry run</strong> is a run that performs no changes: it shows what <em>would</em> happen. Every script in this book's universe should have one. Use the pre-mortem question from Chapter 4 ("can it run in a mode that changes nothing?") and be persistent: dry runs are easy for the AI to add and hideously valuable to have.</p>
+<p>To retrieve facts from an unknown script: check for <code>--help</code> (Unix-y scripts often expose a help screen), or just skim the code for words like <code>dry</code>, <code>plan</code>, <code>--apply</code>, or a comment that says "default is dry-run." If a script has <em>no</em> dry run and you want one, the <em>make it default</em> trick works wonders: ask for "the safest mode to be the default, with a flag like <code>--apply</code> to allow real changes." Never add the reverse. Defaults are habits, and habits should be safe.</p>
+<p>What a good dry run shows:</p>
+<ul>
+<li>The <strong>list</strong> of changes it would make (before → after)</li>
+<li>A <strong>count</strong> ("42 files") — so you can compare with your expectation ("should be 43 — why one less?")</li>
+<li>Any <strong>skips</strong> ("2 files left untouched because…")</li>
+</ul>
+<p>Reading a dry run is a skill of its own, and it's Chapter 2's four questions again, but with reality supplying the answers this time: what will it take in, what will it change (now visible!), what does it touch, when does it stop. You should be able to answer "does this dry run look like what I asked for?" in one yes/no sentence. If the answer is close-but-not-quite, stop running things — that discrepancy you noticed is <em>exactly</em> what Chapter 4's risk list was asking you to find.</p>
+<h2 id="sample-runs-small-to-large">Sample runs, small to large</h2>
+<p>When something has a dry run, add rehearsal sizes: deliberately run it on a tiny subset of <em>real</em> data before letting it loose on the whole. Ways to do it, cheapest first:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Make a <strong>mini real folder</strong>: copy 3 real files into <code>00-playground/mini-real/</code>, run there.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Use a <strong>limit flag</strong> if the script has one (<code>--limit 3</code>, <code>--max 5</code>) — a good AI adds these if asked.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run on the playground's deliberately weird fakes first: empty file, longer names, duplicates.</li>
+</ul>
+<p>Reading order matters: fakes catch <em>crashes and logical errors</em>; mini-real catches <em>assumption errors</em> (filenames you didn't think about, content quirks). Run both. It's the difference between "the recipe has no impossible steps" and "the recipe is wrong for <em>my</em> kitchen's ingredients."</p>
+<h2 id="what-to-actually-watch">What to actually watch</h2>
+<p>Non-programmers watching their first run tend to look at the end ("did it finish?") instead of the middle. Train yourself on these four:</p>
+<table>
+<thead>
+<tr>
+<th>Watch</th>
+<th>Healthy looks like</th>
+<th>Unhealthy looks like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Number processed</strong></td>
+<td>Matches the count you had</td>
+<td>97 of 100, unexplained; or 1,037 when you have 42</td>
+</tr>
+<tr>
+<td><strong>First few changes</strong></td>
+<td>You can <em>name</em> each one as right</td>
+<td>"Wait, why is that file in the list?"</td>
+</tr>
+<tr>
+<td><strong>End state</strong></td>
+<td>Files you didn't expect to touch are… untouched</td>
+<td>Mtime of your original files changed; things <em>lower</em> in the folder tree moved</td>
+</tr>
+<tr>
+<td><strong>Skips and warnings</strong></td>
+<td>Skips have reasons printed</td>
+<td>Empty, or "Warning (suppressed) x214"</td>
+</tr>
+</tbody>
+</table>
+<p>The silent-nothing failure is the sneakiest: the script finishes instantly, prints nothing, and claims success. It did nothing wrong (nothing at all) — wrong folder, wrong extension match, permissions blocked. The ask that catches it early: <strong>"End with 'Done: N things changed.'"</strong> A healthy run ends with a number. Then check that number against your own count. (Also note the mirror-image failure: the loud crash that <em>feels worse</em> than the silent nothing but is <em>better</em> for you. A script that stops immediately with an error, having changed nothing yet, is behaving exactly right — that's what Chapter 4's "does it fail gracefully?" answer looks like in the wild.)</p>
+<h2 id="the-run-twice-rule">The run-twice rule</h2>
+<p>If a script is one-run-and-done, add a second run to the audition before you adopt it. Then check whether it:</p>
+<ul>
+<li>Says "nothing to do" (idempotent and correct — the best case)</li>
+<li>Does the same thing again safely overwriting its own earlier output (fine for some tasks)</li>
+<li>Duplicates, corrupts, deletes, or mixes up files (broken — report back to the AI with the run-twice observation)</li>
+</ul>
+<p>Why? Because in real life you <em>will</em> run things twice: out of habit, after an interruption, because "did I even click run?" haunted you. The run-twice check catches the whole accident class for the cost of one extra click on safe data. For the walkthrough in Chapter 9, it's built in; the example script is dry-run-first and refuses to overwrite existing (so it says "already done — nothing to do", which you would read as healthy).</p>
+<h2 id="health-checks-after-adoption">Health checks after adoption</h2>
+<p>Once a script becomes part of your routine — the "this runs every week" script — give it a health check: a tiny, repeatable test that takes 60 seconds and tells you it's still itself:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Same count? (42 files in; 42 files counted.)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Makes the expected <em>kind</em> of change on the playground copy first?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Same rollback path proven? (Extra-good check when the script version <em>changed</em> since last run.)</li>
+</ul>
+<p>Recording it in one line each time (<code>2026-10-27 — run on mini-real: 5 files, correct; dry again: "nothing to do" — healthy</code>) builds a personal log that's both evidence and history; you'll appreciate it the day an update turns the script wrong. Set it up with Chapter 4's closing-habits ask ("write me a short testing checklist").</p>
+<h2 id="when-to-escalate-the-testing-level">When to escalate the testing level</h2>
+<p>Some scripts deserve more than playground+fakes. Escalate when any of these are true:</p>
+<table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Escalate to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>It touches files outside its own folder (anything in <code>Documents</code>, <code>System</code>, your <code>backups</code>)</td>
+<td>Snapshot your originals first — Chapter 6 — <em>before</em> even the dry run</td>
+</tr>
+<tr>
+<td>It talks to the network at all</td>
+<td>Check where exactly (Ch 4 Q5, Ch 7); consider airplane-mode testing for network-optional paths</td>
+</tr>
+<tr>
+<td>It deletes anything, anywhere</td>
+<td><code>no-gap</code> version + rehearsal on 3 files only; count checks after</td>
+</tr>
+<tr>
+<td>Other people depend on the output (family calendar, business books)</td>
+<td>Add a buddy check: someone else skims the output before you rely on it</td>
+</tr>
+<tr>
+<td>It runs unattended (on a schedule, a watcher, a server)</td>
+<td>Run it scheduled-but-in-the-playground first — never first-run unattended on real data</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-one-piece-at-a-time-principle">The one-piece-at-a-time principle</h2>
+<p>If a script does several things at once and one of them is the risky part — say it "renames files and emails you a summary" — it's fine to ask the AI to split it: <strong>"Give me version one: renames only. Version two: adds the email step."</strong> Each piece gets its own audition; the risky piece never hides inside a bigger working thing. Programmers call this modularization; you can call it "one thing at a time, please" and you get the same benefit.</p>
+<h2 id="where-this-chapter-ends-and-chapter-6-begins">Where this chapter ends and Chapter 6 begins</h2>
+<p>Everything here assumed you're playing with <em>copies</em> and <em>fakes</em>. The moment a script is aimed at files your heart cares about — your photos, your writing, your books — you need to know that even a bad run leaves the originals alive. That's Chapter 6: keeping originals safe. It's the chapter that makes everything in 1–5 <em>stress-free</em>, because once originals are guaranteed, mistakes become lessons and nothing is precious. On we go.</p>
+<hr /></section><hr><section id="ch-6-06-keeping-originals-safe"><h1>Chapter 6 — Keeping Originals Safe</h1><p>Everything in Chapters 1–5 only works if one thing is guaranteed underneath: <strong>when a run goes wrong, the originals survive.</strong> This chapter is about making that guarantee boring, cheap, and repeatable. It's written for people whose data includes irreplaceables — years of photos, a manuscript only they wrote, their business's records — and who have deleted something once in their life and never want to feel that again.</p>
+<h2 id="the-golden-rule">The golden rule</h2>
+<blockquote>
+<p><strong>The originals always have a copy that no run, no script, no AI, and no cleaning rampage can touch — at least until the thing you're doing has been trusted.</strong></p>
+</blockquote>
+<p>Notice what this rule does <em>not</em> say. It does not say "back up everything constantly in six places" (burnout) or "never touch your files again" (not possible). It says: for the specific, narrow window in which you are giving an AI-written script its audition, your originals belong to a <em>different universe of files</em> — one the script could not reach if it took a wrong turn. The window closes when the script is trusted (Chapters 5's criteria) and you resume normal life.</p>
+<h2 id="the-two-snapshot-move">The two-snapshot move</h2>
+<p>For any project that involves running unfamiliar code near things you care about, spend five minutes on two snapshots:</p>
+<ol>
+<li><strong>The folder snapshot.</strong> A copy of <em>the folder(s) the script might touch</em>, zipped or plain-copied, with the date in the name:
+   <code>bash
+   cp -r myproject myproject-BEFORE-autorename-2026-10-27</code>
+   Vanilla-copy first; fancy tools optional. And do it <em>before</em> running anything, always.</li>
+<li><strong>The everything-might-really-matter snapshot.</strong> For anything you'd be devastated to lose — books, photos, business records — one copy on a <em>different device or drive</em> (a second disk, a USB stick, a family computer). Two devices, not two folders. That's the "3-2-1-lite": 1 = working copy, 2 = a copy somewhere else, and ideally, 3 = history (more versions than just latest).</li>
+</ol>
+<p>And for anything you'd be <em>professionally</em> devastated to lose, go further. But no amount of online-only redundancy makes up for skipping the local rehearsal run — Chapter 5's playground — because backup protects against loss, and a rehearsed dry run protects against <em>breakage</em>, which is what an AI-written script most likely does.</p>
+<p>Three rules for naming snapshots, because respect for future-you is the actual mechanism:</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Date-first, purpose-second (<code>2026-10-27-BEFORE-autorename</code>)</td>
+<td>Sorts historically, tells you what it's <em>protecting against</em>.</td>
+</tr>
+<tr>
+<td>Say <code>BEFORE-</code> not <code>backup-</code></td>
+<td>"Backup" is vague; <code>BEFORE</code> literally states what it lets you <em>return to</em>.</td>
+</tr>
+<tr>
+<td>Never snapshot into the same folder being processed</td>
+<td>A <code>cp</code> inside the same tree gets swept up by the very deleting/cleaning script you fear. Snapshot to <em>outside</em> the tree.</td>
+</tr>
+</tbody>
+</table>
+<p>That third rule avoids a real scenario worth naming: <strong>the snapshot that eats itself.</strong> Copy <code>/photos</code> to <code>/photos/BACKUP-FROM-2026-10-27</code> and then run a folder-wide rename, and the rename will <em>also rename the snapshot's files</em>, or worse, the cleaner will treat the extras as clutter. Outside-the-tree copies only.</p>
+<h2 id="versioning-as-superpower-a-friendly-intro">Versioning as superpower (a friendly intro)</h2>
+<p>Snapshots are the beginner's superpower; <strong>version control</strong> is the superpower's superpower — one tool, <code>git</code>, that snapshots <em>everything, constantly, automatically, with an undo.</em> If this sounds like it's for programmers: yes, but it's also for you, and it pairs with this book's mission better than almost anything else in computing. Two options worth knowing about:</p>
+<ul>
+<li><strong>Word-level history</strong> (Word, Google Docs, Notion, etc. all keep edit history). If your project lives in <em>documents</em>, you already have a partial safety net. Use it — it's free.</li>
+<li><strong>Git</strong> (the real thing). If you'll keep working with AI on projects of files, spend one evening learning <code>git init</code>, <code>git add -A</code>, <code>git commit -m "before trying the AI script"</code>, <code>git restore .</code> from the <em>Free AI Coding with OpenCode</em> handbook, Chapter 6. That sequence is "save a restoration point; return to it," and it works at <em>every</em> level: project code, prompts, drafts.</li>
+</ul>
+<p>To net it out at beginner scale: <strong>a fresh snapshot before every first run; a git restore-point if the project is code-heavy.</strong> You don't need to be a Version Control Person to be safe; you need to be a Person Who Takes Two Snapshots. And since the philosophy of this book is cheap habits over perfect systems, one habit — <strong>"snapshot before first run"</strong> — is honestly enough to cover 90% of the ways an AI script can go wrong.</p>
+<h2 id="what-keeping-originals-means-for-inputs-vs-code">What "keeping originals" means for <em>inputs</em> vs. <em>code</em></h2>
+<p>Keep these two kinds of precious separate — they don't survive the same way:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Examples</th>
+<th>What to protect</th>
+<th>Why different</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Your data (inputs)</strong></td>
+<td>photos, manuscripts, spreadsheets, photos again, <em>photos</em></td>
+<td>Snapshots + out-of-tree copy; playground rehearsals; dry runs</td>
+<td>Irreplaceable; and the <em>first</em> thing scripts run over</td>
+</tr>
+<tr>
+<td><strong>The script (code)</strong></td>
+<td><code>safe_rename.py</code>, the AI's many versions</td>
+<td>Version history + the chat log itself</td>
+<td>Re-generatable. Worst case you re-ask the AI.</td>
+</tr>
+</tbody>
+</table>
+<p>A consequence worth making explicit: <strong>when a run looks wrong, the script is the expendable thing.</strong> Delete it without ceremony — you can re-ask. The data is the thing you saved snapshots for. Beginners sometimes protect code feelings — "I spent 20 prompts getting this perfect" — and forget the data. Scripts are disposable; data is forever. (The flip side is a warm note: keeping the <em>prompt that worked</em> is far more valuable than keeping the script — the prompt is short, readable by humans, and can re-create the script on any AI. Worth telling yourself that when you archive code you might discard.)</p>
+<h2 id="the-verified-restore-habit">The verified-restore habit</h2>
+<p>A snapshot is only a safety net if you know how to fall into it. Once — once is enough, ever — do a <strong>restore rehearsal</strong>:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Snapshot a folder.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Delete (or modify) some files in the <em>working copy</em> on purpose.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Restore the contents from the snapshot — <code>cp -r snapshot-things/. working-folder/</code> — or open the zip and copy back.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Confirm everything came back, then close the laptop, satisfied.</li>
+</ul>
+<p>Ten minutes. The day you actually need it, it goes well, because you've done it when nothing was at stake. This is the same trick fire drills use, adapted for files. (If your backups live on another device or drive, restore from <em>that</em> during the drill, so you've proven the <em>whole</em> path, not just the copy-getting step.)</p>
+<h2 id="anti-patterns-how-beginners-accidentally-skip-protection">Anti-patterns: how beginners accidentally skip protection</h2>
+<table>
+<thead>
+<tr>
+<th>Anti-pattern</th>
+<th>What happens</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Working directly on originals "because it's just a rename"</td>
+<td>Renames can collide, truncate, or mis-target; rename is still <em>changing</em> them</td>
+<td>Playground first; originals only after auditions pass</td>
+</tr>
+<tr>
+<td>Snapshot inside the folder being processed</td>
+<td>Snapshot gets mutated by the script</td>
+<td>Snapshot <em>outside</em> the tree</td>
+</tr>
+<tr>
+<td>"It'll be fine, it's a dry run"</td>
+<td>…for the run you did. But the third argument you passed changed the run's <em>mode</em></td>
+<td>Snapshot before <em>every</em> first run of a new version</td>
+</tr>
+<tr>
+<td>Snapshot stack-of-doom (14 <code>BEFORE-</code> copies, all outdated)</td>
+<td>None current; restoration becomes archaeology</td>
+<td>Keep the two most relevant; archive the rest into one dated zip</td>
+</tr>
+<tr>
+<td>Only backup = same drive, different folder</td>
+<td>Drive dies, both die</td>
+<td>Second device or drive for anything devastating-to-lose</td>
+</tr>
+<tr>
+<td>The AI offers to "clean up" your working folder as part of a bigger task</td>
+<td>Unrelated files get deleted — the silent wrongness pattern</td>
+<td>The phrase that always works: "Do not delete <strong>anything</strong>. Leave every file you didn't create. I will clean up."</td>
+</tr>
+</tbody>
+</table>
+<p>That last one deserves underlining. It is possibly the single most useful sentence in this book to say to an AI when you mean it:</p>
+<blockquote>
+<p><strong>"Do not delete anything. Do not move anything you didn't create. Tell me what you would delete, and I'll decide."</strong></p>
+</blockquote>
+<h2 id="where-this-leaves-the-overall-picture">Where this leaves the overall picture</h2>
+<p>By the end of Chapter 6, the safety stack looks like this: read a little (Ch 2), distrust the confident (Ch 3), ask what breaks (Ch 4) — then <em>snapshot</em>, <em>rehearse in the playground</em>, <em>watch the counts</em>, <em>run twice</em>. Two chapters remain on the safety core: where scripts usually go wrong specifically (Ch 7: secrets and paths), and the routine that ties it all together in ten minutes (Ch 8: copy-run-rollback). The finish line is close, and you're doing fine.</p>
+<hr /></section><hr><section id="ch-7-07-secrets-and-paths-to-check"><h1>Chapter 7 — Secrets and Paths to Check</h1><p>Two things cause the <em>real</em> damage when AI-written code goes wrong: <strong>secrets</strong> (credentials that shouldn't be seen, shared, or uploaded) and <strong>paths</strong> (places in your file system the script shouldn't go). Neither one is exotic. Both show up in tiny beginner scripts. Both are checkable in a couple of minutes once you know what to look for. This chapter gives you the two scans that, between them, cover the worst practical outcomes of running code you didn't write.</p>
+<h2 id="part-one-secrets">Part one: secrets</h2>
+<h3 id="what-counts-as-a-secret">What counts as a secret</h3>
+<p>Broader than most people think. A secret is <em>anything another party could use to be you or to unlock something of yours</em>:</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API keys &amp; tokens</td>
+<td><code>sk-…</code> (OpenAI-style), <code>ghp_…</code> (GitHub personal access token), AWS access keys, Stripe keys, Notion/Airtable/Zapier tokens</td>
+</tr>
+<tr>
+<td>Login credentials</td>
+<td>Passwords, sign-in cookies, saved-session files</td>
+</tr>
+<tr>
+<td>Identity documents you'd never share</td>
+<td>Tax forms, account statements, patient records (and nurses: anything PHI), contracts</td>
+</tr>
+<tr>
+<td>Access to your money or your store</td>
+<td>PayPal API strings, eBay/Etsy tokens, bank feeds</td>
+</tr>
+<tr>
+<td>Private personal data</td>
+<td>Contacts, addresses, birthdates — yours, family's, clients'</td>
+</tr>
+</tbody>
+</table>
+<p>An AI cannot be <em>given</em> a secret safely either. Any key, password, or sensitive personal file you paste into a chat is now outside your control — even with a trustworthy vendor, it lands in logs you don't read. Rule for this book: <strong>never paste a secret into an AI conversation. Not even to ask "is this key safe?"</strong> Describe it instead: "the AI asked for an API key; what should I do?"</p>
+<h3 id="where-ai-code-leaks-secrets-the-four-classic-doors">Where AI code leaks secrets — the four classic doors</h3>
+<p><strong>Door 1: The code hard-codes it.</strong> You asked for "use my OpenAI key" and the AI, knowing no better (you didn't provide one), wrote a placeholder like <code>API_KEY = "sk-REPLACE-ME"</code> — and <em>then you</em> filled in the real key, and now it lives in a file that Git or an upload might someday carry away. This is the most common real-world secret mishap in beginner projects. The fix is structural and easy to ask for: <strong>"Load the key from an environment variable or a <code>.env</code> file that's listed in <code>.gitignore</code>; never write it inside the code."</strong> (Your AI knows exactly what that means — it's the industry-standard shape — and the <em>Free AI Coding with OpenCode</em> handbook covers the <code>.gitignore</code> side in detail.)</p>
+<p><strong>Door 2: The code reads the wrong file.</strong> A script meant to process your photos also walks the folder and reads <code>passwords.txt</code> — not maliciously, just indiscriminately. Prevention: keep secrets <em>outside</em> folders scripts operate on. Physical separation is the only 100% defense; a script scanning <code>/home/you</code> can find things, while one restricted to <code>/home/you/photos-editing</code> mostly can't.</p>
+<p><strong>Door 3: The code <em>sends</em> your files somewhere.</strong> Networking plus careless file-reading: an upload accompanying a "helpful" debug log. Ask Chapter 4's question 7 up front; read network-sending code per the Chapter 2 method. If a script uploads <em>anything</em>, you should be able to name the destination and why.</p>
+<p><strong>Door 4: The AI repeats it back.</strong> If a key is already in your chat history from an earlier paste, later messages can quote it, log it, or embed it in "just a debugging print" — and screenshots of those chats end up in tutorials. If a secret ever entered a chat, treat it as <strong>leaked: rotate it now.</strong> Revoking and re-issuing an API key takes two minutes in the vendor's dashboard and is nearly always free. It's the cheapest insurance in computing and beginners skip it constantly.</p>
+<h3 id="the-2-minute-secret-sweep">The 2-minute secret sweep</h3>
+<p>Before relying on any AI-written script, run this sweep on it. If your text editor has find, you can do it in 60 seconds:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Search the code for the shape of keys you actually use (see table above). Expect <em>none</em> in code.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Search for the words <code>key</code>, <code>token</code>, <code>password</code>, <code>secret</code>, <code>Authorization</code>, where they're <em>used</em>.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Check what it reads/writes: is any file on that list instead of your data?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Find <em>where</em> secrets, if any, are expected to live — env var, <code>.env</code>, config file — and confirm that file is <em>not</em> somewhere Git would grab it.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> If the script talks to the internet: confirm nothing sensitive travels. When in doubt, Chapter 5's airplane-mode-ish testing works here too (run offline and watch what it complains about).</li>
+</ul>
+<p>If anything on this list surprises you: stop, ask your AI about it in the plain-words way (no pasting), and rotate anything already exposed. That's the whole sweep — a couple of searches, half a minute each, and the class of "oops, my key" is effectively covered.</p>
+<h2 id="part-two-paths">Part two: paths</h2>
+<h3 id="the-one-idea-to-internalize">The one idea to internalize</h3>
+<p>A <strong>path</strong> is where something lives on your computer, written down. <code>C:\Users\Dylan\Documents\book\chapter-3.docx</code> is one; <code>book/chapter-3.docx</code> is another. The difference between those two is <em>the entire concept</em> of this half of the chapter:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Written like</th>
+<th>What it says</th>
+<th>Risk level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Absolute</strong></td>
+<td><code>C:\Users\…</code>, <code>/Users/you/…</code>, <code>/home/you/…</code></td>
+<td>A place <em>in absolute terms</em> — which computer, which account, everything pinned</td>
+<td>Safe but rigid: breaks on other machines unless adjusted</td>
+</tr>
+<tr>
+<td><strong>Relative</strong></td>
+<td><code>photos</code>, <code>./output</code>, <code>../data</code></td>
+<td>A place <em>relative to where you happen to run it</em></td>
+<td>Flexible but surprising: run it from the wrong folder and "photos" means a <em>different</em> photos</td>
+</tr>
+</tbody>
+</table>
+<p>Relative is why the Chapter 1 example script had a loose end: <code>folder = "photos"</code> doesn't say <em>which</em> photos — it means "a folder named photos near wherever I happen to be run." Run it from your home directory and <em>you</em> probably have no such folder — or worse, you do. This is the #1 lurking surprise for beginners running scripts prepared by someone else: <strong>the script's "photos" and your photos are different folders unless proven otherwise.</strong></p>
+<h3 id="the-dangerous-paths-scan">The dangerous-paths scan</h3>
+<p>AI misadventures in file paths follow patterns. Scan for these:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Root paths.</strong> Any path that is just <code>/</code>, <code>C:\</code>, <code>C:\Windows</code>, <code>~</code> (your whole home!), or a drive letter with nothing after it. A script told to delete everything in such a path will happily do so. If a <em>bare</em> root shows up as a default, stop and ask.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Walking up.</strong> <code>..</code> (or <code>../..</code>) means "one level up." A cleanup script that computes "everything one level up from here…" is sweeping beyond its lane. Ask: how far up do you go, and why?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Home-wide or disk-wide operations.</strong> Anything that <em>searches from</em> your home folder, mentions "all drives", <code>/mnt</code>, backup locations ("backup!") or system directories is beyond reasonable for a fresh script. The right place is a subfolder of your project.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Hard-coded personal paths from the AI's imagination.</strong> <code>C:\Users\YourName\...</code>, <code>/Users/username/...</code> — never real. Replace with your actual path; verify by <em>printing</em> it before acting on it.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Wildcards in commands.</strong> <code>rm -rf *</code>, <code>del *.*</code>, <code>find … -delete</code> — delete-everything-matching commands. If you see one and you did not explicitly discuss it, do not run it. Ask what it would actually match — the truth may be "everything in this folder, including what you meant to keep."</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>The silent overwrite target.</strong> Where does output <em>go</em>? Same folder (overwrites) or a new folder (almost always what you want for iterables)? This is Chapter 3's no-gap principle again, expressed as a path question.</li>
+</ul>
+<h3 id="rehearsing-paths-safely">Rehearsing paths safely</h3>
+<p>Paths are easy to test <em>before</em> landing on real files, and the tests are pleasant to watch:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run the script's first stage (or dry run) and note the paths it <em>claims</em>. In our Chapter 9 example, the dry run prints each path before touching anything.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Use <code>pwd</code> (Linux/macOS) or <code>cd</code> (bare, Windows) — prints the folder you're standing in relative to the script.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Rename one file's path deliberately (a playground file): does the script skip it loudly?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Feed it a path that doesn't exist: does it refuse or guess? (Guessing paths = asking for weird outcomes.)</li>
+</ul>
+<p>None of these take more than a minute each. They teach you what beforehand: <strong>what the script thinks "here" is, whether it checks those beliefs, and how it fails when wrong.</strong> That's path-safety, whole.</p>
+<h2 id="the-combined-pre-launch-check-one-paragraph-youll-memorize">The combined pre-launch check: one paragraph you'll memorize</h2>
+<p>Long after this book's details fade, keep the paragraph. Here it is, one breath long:</p>
+<blockquote>
+<p><em>What does it read, what does it change, where does it go outside its folder, and what does it ask for secrets-wise — and where do those live?</em></p>
+</blockquote>
+<p>Read (Chapter 2) and distrust (Chapter 3), and you'll have narrowed in on those four questions already. This chapter just gives them teeth: two minutes scanning for secrets, three minutes for paths, and the scary categories are covered.</p>
+<p>Next up, these combine into the one routine to carry everywhere: <strong>copy-run-rollback.</strong></p>
+<hr /></section><hr><section id="ch-8-08-the-copy-run-rollback-routine"><h1>Chapter 8 — The Copy-Run-Rollback Routine</h1><p>Everything so far — reading, distrusting, questioning, testing, snapshots, secret-and-path scans — now folds into one repeatable loop you'll run on every piece of AI code you take seriously. It's called <strong>copy-run-rollback</strong>, and once it's a habit it will take you about ten minutes, start to finish (fifteen the first few times — that's honest and normal). It's the routine this whole book exists to teach, and by far the most important muscle here.</p>
+<h2 id="the-name">The name</h2>
+<p>Three moves:</p>
+<ul>
+<li><strong>COPY</strong> — make the situation copy-safe before anything runs.</li>
+<li><strong>RUN</strong> — execute, starting from the least destructive mode, escalating only as evidence accumulates.</li>
+<li><strong>ROLLBACK</strong> — proven, one-step undo, rehearsed <em>before</em> you need it.</li>
+</ul>
+<p>That's the loop. When something new and untrusted enters your world (an AI script, a new version of a trusted script, first run against a new set of files), you run the loop. When you've nothing new, the loop is short — a quick dry run in the playground a second time, then carry on. The loop is what lets you use AI code as <em>material</em> rather than <em>mystery</em>, which is the actual goal of this book.</p>
+<h2 id="phase-1-copy-2-minutes">Phase 1: COPY (2 minutes)</h2>
+<p>Do these in order. They're cheap, and each one removes a whole class of bad outcomes:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Snapshot the folder(s) the script might touch</strong> — <em>outside</em> the tree, date-first names (Chapter 6). Two minutes; this is the whole safety net.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Check the secrets sweep</strong> (Chapter 7's checklist) — no keys in code, no secrets in the blast radius.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Check the paths sweep</strong> — no bare roots, no <code>..</code> inheritance, no delete-wildcards you didn't discuss.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Read the script's structure</strong> lightly (Chapter 2's three passes — you'll be fast at this now).</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Skim the risk list</strong> from Chapter 4's pre-mortem, and refresh memory: <em>what am I watching for?</em></li>
+</ul>
+<p>One crucial nuance for Phase 1: the source of truth here is the <em>latest</em> code. If the AI wrote version 3 while you were sleeping — this happens more than beginners expect, silently editing files — glance at what changed (<code>git diff</code>, or a fresh eyeball pass) before skipping anything. <strong>The trust-me moment restarts with each new version.</strong> There's no "it worked last time" for code you didn't write.</p>
+<h2 id="phase-2-run-5-minutes-staged">Phase 2: RUN (5 minutes, staged)</h2>
+<p>Step 1: <strong>Dry run first.</strong> playground folder (real copies), <code>--dry-run</code> or plan mode on, and watch the output (Chapter 5's four things to watch: counts, first few changes, untouched things, skips).</p>
+<p>Step 2: <strong>Rehearsal run on a small slice of real data.</strong> --limit-3, or a <code>mini-real</code> playground folder. This is the step that catches "wrong assumptions about <em>my</em> files," and it's worth five minutes.</p>
+<p>Step 3: <strong>Run-twice check on the rehearsal set.</strong> Idempotence — Chapter 5's rule — means the second run says "nothing to do." The second run's honesty is one of the best single signals you'll ever get about a script's character.</p>
+<p>Step 4: <strong>The real run.</strong> Against actual files — this should <em>feel anticlimactic</em>: dry run, rehearsal, and run-twice already happened. That's success; not the drama of a first attempt, but the boredom of a prepared one.</p>
+<p>Each step escalates only if the previous one was boring. A surprise anywhere — a count off by one, a file in the plan you didn't expect — <em>stops the routine</em> and sends you back to Chapters 3–4: name the surprise in plain words, ask the AI about it, re-rehearse. Surprises are cheap when caught at a dry run; and exactly as expensive as the stage where you didn't listen.</p>
+<h2 id="phase-3-rollback-2-minutes-or-nothing-if-you-already-did-it">Phase 3: ROLLBACK (2 minutes — or nothing, if you already did it)</h2>
+<p>The rollback isn't an emergency measure; it's a <em>first-class phase</em> of the routine with two requirements:</p>
+<ol>
+<li><strong>It exists.</strong> You can name the exact way you'd undo: restore snapshot; <code>git restore .</code>; delete the outputs folder and re-copy originals; re-run a reverse script if one exists (a "no-gap" design, Chapter 3).</li>
+<li><strong>You've <em>used</em> it once, on purpose.</strong> During Phase 2's rehearsal, sometimes do the undo drill: after rehearsing real-but-throwaway changes, roll back, verify everything's identical, and then re-run. Every 10th run, drill again; and once a month at minimum. It costs two minutes and guarantees your undo knowledge doesn't rust.</li>
+</ol>
+<p>Rollback drills also build a different, quieter thing: <strong>calm.</strong> Non-coders' panic around code comes almost entirely from feeling trapped — "I broke something and I don't know how to unbreak it." The drill teaches your body the way a fire drill does: this is not a cliff, this is a stairway; you have walked it.</p>
+<h2 id="the-checklist-printable">The checklist, printable</h2>
+<p>Here's the whole routine as a one-page checklist. Print it, tape it, use it forever — or fold it in half and keep it next to your keyboard.</p>
+<blockquote>
+<p><strong>COPY (2 min)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Snapshot the folders the script will touch — <em>outside</em> the tree, <code>YYYY-MM-DD-BEFORE-thing</code></li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Secrets sweep clean (no keys in code; nothing sensitive in its blast radius)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Paths sweep clean (no bare <code>/</code> or <code>C:\</code>; no unexpected <code>..</code>; no delete-wildcards)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Three light reading passes done; risk list refreshed</li>
+</ul>
+<p><strong>RUN (5 min, staged)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Dry run on playground copies — watch counts, first few changes, untouched things, skips</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Mini-real rehearsal (3–5 real files) — does the output <em>look</em> right, name by name?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run twice — second run is either "nothing to do" or demonstrably safe</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Now, and only now: real run. Watch the same four things. Expect a <em>quiet</em> run.</li>
+</ul>
+<p><strong>ROLLBACK (2 min)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Can I name the undo path right now, from memory? (If no: make one before continuing.)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Drill it on the rehearsal set, roughly every 10th run: roll back, verify identical, re-run.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> If surprised at any stage: stop, describe the surprise in plain words to the AI, re-run from Phase 1.</li>
+</ul>
+</blockquote>
+<p>Laminate it if you must (figuratively); it's the whole book in fifteen lines.</p>
+<h2 id="ten-minute-budget-realistically">Ten-minute budget, realistically</h2>
+<p>Let's time it honestly — the routine has to fit in an evening to survive:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reading passes (Ch 2)</td>
+<td>5—8 min (fast after a few scripts; beginners take 15)</td>
+</tr>
+<tr>
+<td>Pre-mortem questions (Ch 4)</td>
+<td>3–5 min</td>
+</tr>
+<tr>
+<td>COPY phase</td>
+<td>2–3 min</td>
+</tr>
+<tr>
+<td>RUN phases (dry, mini-real, run-twice, real)</td>
+<td>5–8 min</td>
+</tr>
+<tr>
+<td>ROLLBACK noted/drilled</td>
+<td>0–2 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~15 minutes first times; ~10 once it's a habit</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Fifteen minutes is the honest first-time number; don't let anyone tell you less. The habit is real once it's under ten and doesn't feel like effort. It does get there — the walkthrough in Chapter 9 comes in at roughly nine.</p>
+<h2 id="when-the-routine-encounters-the-ais-own-workflow">When the routine encounters the AI's own workflow</h2>
+<p>If you're using an agent like OpenCode directly in your project (the <em>Free AI Coding with OpenCode</em> route), the routine adapts cleanly:</p>
+<ul>
+<li>Phase 1's snapshot becomes <code>git commit</code> before the task (plus the branch habit that book teaches).</li>
+<li>Phase 2's dry run is often OpenCode's <strong>plan mode</strong> — a plan you read <em>before</em> it writes anything, which is a dry run for <em>plans</em>.</li>
+<li>Phase 3's rollback is <code>git restore</code> and/or <code>/undo</code>.</li>
+</ul>
+<p>The <em>sequence</em> stays identical, though: see it before it happens, rehearse before it's real, undo is a proven step and not a wish. That's the deeply transferable idea: <strong>the routine is tool-agnostic — it's a philosophy of staged evidence, and it works in every environment you'll ever meet, including ones that don't exist yet.</strong></p>
+<h2 id="what-trusted-means-at-the-end">What "trusted" means at the end</h2>
+<p>The routine exits when a script has passed enough auditions that you use it without the ceremony. What enough means is your call, and here are honest criteria:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Three real runs, no surprises, counts verified each time</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> The run-twice check is trusted (second run always says "nothing to do")</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> The rollback has been drilled recently enough that you could do it half-asleep</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Its failure modes are known to you — you've <em>seen</em> it fail (on purpose: fed it an empty file, a missing folder) and it failed gracefully</li>
+</ul>
+<p>Green on all four = everyday tool; checklists optional but recommended weekly. Two greens = audition tool; full routine every time. Anything less — including code you can't read at all (Chapter 2's "?" list unresolved) — stays a full-routine tool, permanent. There's no shame in a script living at full routine forever: plenty of real code works this way, in every serious shop, all the time.</p>
+<p>Boring, repeatable, calm. That's the whole routine. Now let's <em>watch</em> it happen, block by block, on a real script.</p>
+<hr /></section><hr><section id="ch-9-09-annotated-walkthrough"><h1>Chapter 9 — An Annotated Walkthrough</h1><p>Time to watch the whole method happen, start to finish, on a real script. The example in this chapter ships with this book as a <em>runnable</em> file — <code>examples/walkthrough/safe_rename.py</code> — so you can read the annotations here and then run the actual thing yourself, exactly the way the routine teaches. Nothing in it is theoretical.</p>
+<h2 id="the-mission">The mission</h2>
+<p>A common real-life ask. You have a folder of camera exports named like <code>IMG_4021.jpg</code>, and you want them renamed to <code>2026-10-27_IMG_4021.jpg</code> (date-prefixed). You don't trust your memory of which is which, and there are <em>lots</em> of them. You asked your AI helper for a small script, and it produced this.</p>
+<p>This walkthrough will follow the full loop from Chapter 8: read it (Ch 2 method), interrogate it (Ch 3–4), copy (Ch 6), run it staged (Ch 5), watch the secrets/paths scans (Ch 7), and rehearse rollback. Along the way we'll spot <strong>three deliberate trust-me traps</strong> — the version you got from the AI, like the first drafts of all AI code, was <em>slightly</em> too optimistic, and we pushed back before touching anything real. All edges, honestly shown.</p>
+<h2 id="pass-1-reading-the-script-structure">Pass 1: reading the script (structure)</h2>
+<p>Here is the script, verbatim, with the code in the left column and the reader's commentary alongside. <strong>Blocks</strong> are the named chunks of the file. Compare each row to what a <em>less careful</em> version would look like — that contrast is where the teaching lives.</p>
+<pre><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;Rename photo files by prefixing the current date, e.g.:
+    IMG_4021.jpg  -&gt;  2026-10-27_IMG_4021.jpg
+
+By default this makes NO changes: it prints a plan only.
+Add --apply to actually rename. It never overwrites and
+never touches paths outside the folder you give it.
+&quot;&quot;&quot;
+</code></pre>
+<p><em>Block A — the header docstring.</em> Claims, in writing: renames; by default changes nothing; never overwrites; never roams outside the folder you name. Four explicit claims is <em>good</em> sign (most scripts make zero). But claims are claims — Chapter 3 says we verify. Keep score as you read: by the end we'll confirm each of the four.</p>
+<pre><code class="language-python">import argparse
+import datetime
+import pathlib
+import sys
+</code></pre>
+<p><em>Block B — imports.</em> Notice what is <em>not</em> here: no <code>os</code>-level delete helpers imported directly, no <code>subprocess</code> (can't run other programs), <code>no requests</code> (can't phone home), no <code>shutil</code> at top level (which would hint at move/delete powers). The script borrows only argument-parsing, dates, path objects, and system-exit. <strong>Power inventory, via imports, in ten seconds: file renames only.</strong> That's a script with a small blast radius.</p>
+<pre><code class="language-python">def main() -&gt; int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&quot;folder&quot;, help=&quot;folder containing files to rename&quot;)
+    parser.add_argument(&quot;--apply&quot;, action=&quot;store_true&quot;,
+                        help=&quot;actually rename (default: plan only)&quot;)
+    args = parser.parse_args()
+
+    root = pathlib.Path(args.folder).expanduser().resolve()
+</code></pre>
+<p><em>Block C — the command line.</em> Two arguments and both speak English when you ask for <code>--help</code>. <code>--apply</code> defaults to <em>false</em> — meaning <strong>the safe mode is the default mode</strong>, exactly the Chapter 5 habit we want. Then <code>resolve()</code> — this turns the folder argument into an absolute path <em>now</em>, and prints stability: whatever wayward tricks the script does later, every path it computes is anchored to the folder <code>you</code> named, not to "wherever I happened to be run from." (The Chapter 7 relative-path trap, defused at the door.)</p>
+<pre><code class="language-python">    if not root.is_dir():
+        print(f&quot;ERROR: '{args.folder}' is not a folder.&quot;, file=sys.stderr)
+        return 2
+    if not any(root.iterdir()):
+        print(f&quot;ERROR: '{root}' is empty — is the path right?&quot;, file=sys.stderr)
+        return 2
+</code></pre>
+<p><em>Block D — the boundary checks.</em> This is the block a trust-me draft omits entirely, and where our walkthrough's first trap is going to live. Two <code>if</code> statements, each pairing a <em>check</em> with a <em>polite refusal and exit code</em>: wrong folder → say so and stop; empty folder → probably a typo — <em>ask the human</em>, rather than proceed. Notice how the error messages help: they name what was wrong and suggest what might be right. Boundary, alarm, story. Three of the Chapter 2 audit's three yeses.</p>
+<pre><code class="language-python">    today = datetime.date.today().isoformat()
+    renames = []
+    for entry in sorted(root.iterdir()):
+        if not entry.is_file():
+            continue
+        if not entry.name.startswith(&quot;IMG_&quot;):
+            continue
+        new_name = f&quot;{today}_{entry.name}&quot;
+        renames.append((entry, entry.with_name(new_name)))
+</code></pre>
+<p><em>Block E — the planner.</em> <strong>Nothing here renames anything.</strong> The loop only <em>lists</em>: walks the folder, filters to <code>IMG_*</code> files, builds the <em>proposed</em> new names, appends them to a list called <code>renames</code>. Two filters, both suggesting good boundaries: <code>is_file()</code> skips folders (no folder-rename weirdness); <code>startswith("IMG_")</code> targets only the files you meant. And <code>sorted(...)</code> — an organized pass, not a chaotic one — is a small but real clue that the author thought about reproducibility: two runs produce the same plan in the same order.</p>
+<pre><code class="language-python">    if not renames:
+        print(&quot;Nothing to do: no 'IMG_*' files found.&quot;)
+        return 0
+    print(f&quot;Plan: rename {len(renames)} file(s) in {root}\n&quot;)
+</code></pre>
+<p><em>Block F — the count.</em> The silent-nothing failure from Chapter 5, pre-empted. If the filter matched zero files — as it <em>will</em> if your files are actually called <code>DSC_3021.jpg</code> instead of <code>IMG_</code> — the script says so out loud, with the reason, and exits <em>successfully</em> rather than pretending to have done work. And every run states its count up front: "rename 42 file(s)." Compare that to Chapter 5's "42 expected" — now it's a number you can <em>check against reality</em>.</p>
+<pre><code class="language-python">    for entry, target in renames:
+        if target.exists():
+            print(f&quot;SKIP (already renamed, stopping): {entry.name}&quot;)
+            return 0
+        print(f&quot;  {entry.name}  -&gt;  {target.name}&quot;)
+</code></pre>
+<p><em>Block G — plan printing with a collision guard.</em> Before it names each proposed change, it checks: does the target already exist? If <em>anything</em> would be overwritten — including "it's already been renamed" — the whole plan <strong>stops right there</strong> rather than barreling through with collisions. That's the Chapter 3 no-gap principle, again in miniature. Then each line of the plan, old name → new name, printed plainly. This is the exact output Chapter 5 taught you to read: <em>name by name</em>, nodding or frowning at each.</p>
+<pre><code class="language-python">    if not args.apply:
+        print(f&quot;\nPlan only ({len(renames)} file(s)). &quot;
+              &quot;Re-run with --apply to make the changes.&quot;)
+        return 0
+</code></pre>
+<p><em>Block H — the dry-run gate.</em> The gate that keeps promises: without <code>--apply</code>, the script <em>stops here</em>, having changed nothing, and says how to proceed when you want the real thing. Four claims from Block A checkable so far: default mode changes nothing — <strong>confirmed</strong>; never overwrites — <strong>confirmed</strong> (Block G); state-covered count and plan — <strong>confirmed</strong> (E, G, H).</p>
+<pre><code class="language-python">    moved = 0
+    for entry, target in renames:
+        try:
+            entry.rename(target)
+            moved += 1
+        except OSError as exc:
+            print(f&quot;ERROR: could not rename {entry.name}: {exc}&quot;,
+                  file=sys.stderr)
+            return 3
+    print(f&quot;Done: {moved} file(s) renamed in {root}&quot;)
+    return 0
+</code></pre>
+<p><em>Block I — the safe apply.</em> Now — and only now — does anything change. And look <em>how</em>: one file per loop trip, each rename individually guarded, and any failure stops everything with a specific message about <em>which</em> file and <em>why</em>. (Not "some error occurred"; the exact one.) The final line echoes the Chapter 5 ask: <strong>"Done: N things changed."</strong> with N you can compare to the plan. If reality and plan ever disagree, this is the line that will tell you. (A two-line tail not shown here — <code>if __name__ == "__main__":</code> calling <code>main()</code> — merely hands control to the code above; nothing to audit there.)</p>
+<h2 id="what-our-three-traps-looked-like">What our three traps looked like</h2>
+<p>The chapter promised three deliberate trust-me traps found during the walkthrough. Here they are, from the <em>first draft</em> the AI gave us, each one caught with a question <em>before</em> any code ran:</p>
+<table>
+<thead>
+<tr>
+<th>Trap</th>
+<th>First draft had</th>
+<th>The question that caught it</th>
+<th>What it became</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Optimistic world</td>
+<td><code>folder = "photos"</code> — silently relative to wherever the script happened to run</td>
+<td>"Which photos, exactly — what if I run this from a different folder?"</td>
+<td>Absolute <code>resolve()</code> anchored to a folder you <em>name</em> (Block C)</td>
+</tr>
+<tr>
+<td>2. Silent blast radius</td>
+<td>No count, no plan, no filters. <em>Renamed every file in the folder</em> to date-prefixed, including the script copies and your notes file</td>
+<td>"What files will this touch — list them before changing anything?"</td>
+<td><code>is_file()</code> + <code>IMG_</code> filter, plan printing, and a count (E–G)</td>
+</tr>
+<tr>
+<td>3. Deleting before creating</td>
+<td>Collisions solved with <code>os.remove(target)</code> before renaming</td>
+<td>"What happens to a name that already exists? Delete it?!"</td>
+<td>Refuse loudly on any collision (Block G) — no deletion anywhere</td>
+</tr>
+</tbody>
+</table>
+<p>Notice each one is Chapter 3/4's decoder, aimed at a <em>specific</em> claim. You don't need to <em>read code better</em> to catch these; you need to ask about the boundary of the cook's behavior. And that's the chapter's quiet lesson: <strong>three questions caught three traps. Not code knowledge — asking.</strong></p>
+<h2 id="now-the-routine-timed">Now the routine, timed</h2>
+<p>The Chapter 8 loop, applied for real. Times here are true ones from the actual run of this book's build tests.</p>
+<p><strong>COPY (2 min).</strong> Snapshot the test folder (<code>cp -r mini-real mini-real-BEFORE-rename</code>) — wait, no: the <em>playground</em> folder's snapshot, since the audition is in the playground. In the walkthrough's case that's: a mini-real folder inside the playground with three fake "photos" (<code>IMG_0001.jpg</code>, <code>IMG_0002.jpg</code>, <code>IMG_0004.jpg</code>), plus one decoy (<code>notes.txt</code>) plus one subfolder. Then the sweeps: no secrets in the script (none — Block B showed no imports with any need, and a text search confirmed no <code>token|key|password</code> words), paths clean (no bare roots; no <code>..</code> anywhere; no wildcards). Green.</p>
+<p><strong>RUN (5 min).</strong> Dry run:</p>
+<pre><code>$ python3 examples/walkthrough/safe_rename.py 00-playground/mini-real
+Plan: rename 3 file(s) in .../00-playground/mini-real
+
+  IMG_0001.jpg  -&gt;  2026-10-27_IMG_0001.jpg
+  IMG_0002.jpg  -&gt;  2026-10-27_IMG_0002.jpg
+  IMG_0004.jpg  -&gt;  2026-10-27_IMG_0004.jpg
+
+Plan only (3 file(s)). Re-run with --apply to make the changes.
+</code></pre>
+<p>Read that output with Chapter 5's eyes: <strong>count right?</strong> (3 — the decoy <code>notes.txt</code> and the subfolder were skipped, which is <em>exactly</em> what I want. Green light.) <strong>First few changes sane?</strong> Every line is date + original name, no truncation, no weirdness. <strong>Untouched things untouched?</strong> Dry run proves it structurally (no <code>--apply</code>).</p>
+<p>Then <code>--apply</code> on the mini-real slice: three renames actually happen, "Done: 3 file(s) renamed." Then the <strong>run-twice check</strong>: re-run, and the script answers:</p>
+<pre><code>Nothing to do: no 'IMG_*' files found.
+</code></pre>
+<p>…which is <em>healthy</em> for this script: renamed files now start with a date, not <code>IMG_</code>, so the filter matches nothing — the idempotence we wanted, arrived at in the natural way rather than by a special-case hack. (A subtler script might want a "re-scan prefix" option; that's a nice-to-have, noted for Chapter 4's "what would you add later" list.)</p>
+<p><strong>ROLLBACK (2 min).</strong> The drill, exactly as rehearsed in Chapter 6: rename the files halfway back with your own two hands — or, the <em>honest</em> drill, since the snapshot was taken: wipe the folder, restore from <code>mini-real-BEFORE-rename</code>, verify all 4 files identical to pre-run state. Two minutes, half-asleep-able, and now I <em>know</em> I'm safe with this script rather than hoping.</p>
+<p>Total: under ten minutes, exactly as promised, and every claim the script's header made (four of them) is now <em>individually verified by watched evidence</em>, not tone.</p>
+<h2 id="a-closing-reflection-from-the-walkthrough">A closing reflection from the walkthrough</h2>
+<p>Something worth saying plainly, because it's the emotional turn of this whole book: after a walkthrough like this, the script stops being "that thing the AI wrote that I don't understand" and becomes "my renamer, with known edges." That's <em>agency</em>, and it's buildable in minutes per script, and it's why this book keeps insisting that a non-coder can, in the practical run-of-life sense, <strong>read code safely</strong> — not by becoming a magician, but by becoming an auditor: the kind of person who checks counts, watches for surprises, rehearses undo, and holds every confident claim until evidence arrives.</p>
+<p>The last chapter wraps the essentials into one printable page: the safety checklist and the glossary.</p>
+<hr /></section><hr><section id="ch-10-10-safety-checklist-and-glossary"><h1>Chapter 10 — Safety Checklist &amp; Glossary</h1><p>The wrap-up: one printable page of routine, one pocket dictionary. This chapter is designed to be used <em>forever</em> — bookmark it, print it, tape it near the monitor.</p>
+<h2 id="the-one-page-safety-checklist">The one-page safety checklist</h2>
+<p>This is Chapters 1–8 compressed to what you actually need at the keyboard. Photocopy-friendly on purpose.</p>
+<blockquote>
+<h3 id="before-you-run-ai-written-code-the-whole-book-one-page">Before you run AI-written code (the whole book, one page)</h3>
+<p><strong>Reading (about 5 minutes — Chapters 1–2)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does the purpose match the promise? (File name, top comments, function names)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Imports tell you its powers: files? network? other programs? (Danger words: <code>rmtree</code>, <code>rm -rf</code>, <code>"w"</code> overwrite, <code>subprocess</code>, <code>curl</code> piped into <code>sh</code>, <code>push --force</code>)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Loops over <em>everything</em>? Conditions guarding destructive lines? Can I name each <code>?</code> and unresolved line? (Those go on the ask list)</li>
+</ul>
+<p><strong>Questioning (3 minutes — Chapters 3–4)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Any "trust me" phrases in the conversation? ("just run it", "I tested it", "it's safe") Decoded &amp; converted into specific checks?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Pre-mortem asked: <em>what could this break, and what would I notice?</em></li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Counts, undo path, network talks, and secrets covered. Simplest version?</li>
+</ul>
+<p><strong>COPY (2 minutes — Chapters 6–7)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Snapshot the folders it might touch — <em>outside</em> the tree, named <code>YYYY-MM-DD-BEFORE-something</code></li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Secret sweep: no key-shaped strings in code; nothing sensitive in its blast radius; secrets live in env/<code>.env</code>, never in code, never in chat</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Path sweep: no bare <code>/</code>, <code>C:\</code>, or <code>~</code>; no sneaky <code>..</code>; no delete-wildcards; output goes somewhere <em>new</em>, not over</li>
+</ul>
+<p><strong>RUN (5 minutes, staged — Chapter 5)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Dry run in a playground of copies — count, first few changes, untouched things, skips, all sane</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Mini-real rehearsal (3–5 real files) — output <em>looks</em> right, name by name</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run twice: second run = "nothing to do" or demonstrably safe</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Real run: expect it quiet. Counts match plan. Nothing touched that shouldn't have been.</li>
+</ul>
+<p><strong>ROLLBACK (2 minutes, drilled — Chapter 8)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Undo path nameable from memory right now</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Drill once a month (and after any script update): roll back a rehearsal run, verify identical, re-run</li>
+</ul>
+<p><strong>When surprised:</strong> stop → describe the surprise in plain words to the AI → re-rehearse → re-run. Never "keep going regardless"; surprises are cheap caught at a dry run and expensive ignored.</p>
+</blockquote>
+<h3 id="the-30-second-version-memorize-this">The 30-second version (memorize this)</h3>
+<blockquote>
+<p><strong>Read for power, ask for specifics, copy first, run small, watch counts, know your way back.</strong></p>
+</blockquote>
+<h2 id="the-pocket-glossary">The pocket glossary</h2>
+<p>Plain-English definitions, alphabetized. Cross-references point at the chapter that teaches it in context.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Absolute path</strong></td>
+<td>A file's location written in full from the top (<code>C:\Users\you\…</code>, <code>/home/you/…</code>). Predictable, but breaks if moved to another machine. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>API key / token</strong></td>
+<td>A password-like string identifying you to a service. Treat like cash: never in code, chat, or screenshots. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Argument / flag</strong></td>
+<td>Extra words after a command that change its behavior, like <code>--apply</code> or <code>--dry-run</code>.</td>
+</tr>
+<tr>
+<td><strong>Blast radius</strong></td>
+<td>Everything a script <em>could</em> touch if it misbehaved. Reading code = sizing the blast radius before running it. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>Branch</strong></td>
+<td>In Git, a parallel line of work you can try and throw away without affecting the main one.</td>
+</tr>
+<tr>
+<td><strong>Code / program / script</strong></td>
+<td>Text that is instructions for a computer. A <em>script</em> is a one-file, one-job program. (Ch 1)</td>
+</tr>
+<tr>
+<td><strong>Command line / terminal</strong></td>
+<td>The text window where you type commands directly to your computer.</td>
+</tr>
+<tr>
+<td><strong>Condition (<code>if</code>)</strong></td>
+<td>Code that acts only when something is true. The fence around dangerous actions. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>Dry run / plan mode</strong></td>
+<td>A run that shows what <em>would</em> happen without doing it. Chapter 5's cornerstone; also Chapter 8's RUN step 1.</td>
+</tr>
+<tr>
+<td><strong>Env var (.env)</strong></td>
+<td>A place to store secrets <em>outside</em> your code — the safe house for API keys. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Function</strong></td>
+<td>A named mini-recipe inside a script, callable by name. Reading function names = skimming the table of contents. (Ch 1)</td>
+</tr>
+<tr>
+<td><strong>Git</strong></td>
+<td>Industry-standard version control: perfect memory + undo for a folder of files. (Ch 6; full walkthrough in <em>Free AI Coding with OpenCode</em>, Ch 6)</td>
+</tr>
+<tr>
+<td><strong>Idempotent</strong></td>
+<td>Safe to run twice — the second run does nothing new. Chapter 5's run-twice test checks for it.</td>
+</tr>
+<tr>
+<td><strong>Import</strong></td>
+<td>A line borrowing someone else's code. Reading imports = a script's power inventory. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>Loop (<code>for</code>/<code>while</code>)</strong></td>
+<td>Code that repeats — once per item or until told to stop. Where effects multiply. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>No-gap version</strong></td>
+<td>A design where nothing is deleted until its replacement fully exists. (Ch 3)</td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td>Where something lives on disk, written down. Absolute (pinned) vs relative (relative to where you run it). (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>PHI</strong></td>
+<td>Protected Health Information — patient data. Nurses and other health workers: PHI is never a chat input, ever. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Playground</strong></td>
+<td>A scratch folder of copies and fakes where first runs happen. (Ch 5)</td>
+</tr>
+<tr>
+<td><strong>Pre-mortem</strong></td>
+<td>Asking "what could this break?" <em>before</em> writing/running — imagining the failure first. (Ch 4)</td>
+</tr>
+<tr>
+<td><strong>Relative path</strong></td>
+<td>A location written relative to <em>where you are now</em> (<code>photos</code>, <code>../data</code>). Flexible, but means different things from different places. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Resolve (a path)</strong></td>
+<td>Turn a possibly-relative path into a definite one. Common first defense in careful scripts. (Ch 9)</td>
+</tr>
+<tr>
+<td><strong>Rollback</strong></td>
+<td>Going back to the pre-run state via snapshot, Git, or a reverse step. Rehearsed, not hoped for. (Ch 6, 8)</td>
+</tr>
+<tr>
+<td><strong>Secret</strong></td>
+<td>Anything that lets someone be/unlock you: keys, tokens, passwords, cookies, PHI, money-access strings. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Silent wrongness</strong></td>
+<td>A failure with no crash — the worst kind. Count checks and plan-output defeat it. (Ch 5)</td>
+</tr>
+<tr>
+<td><strong>Snapshot</strong></td>
+<td>A full copy of a folder (or Git commit) taken before doing something risky, named so future-you understands it. (Ch 6)</td>
+</tr>
+<tr>
+<td><strong>Terminal</strong></td>
+<td>See command line.</td>
+</tr>
+<tr>
+<td><strong>Trust-me moment</strong></td>
+<td>When confidence is offered instead of evidence — in AI words ("just run it") or AI code (delete-then-create with no guard). (Ch 3, 4)</td>
+</tr>
+<tr>
+<td><strong>Variable</strong></td>
+<td>A labeled box holding one piece of information inside a program. (Ch 1)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="thirty-days-of-practice-a-tiny-curriculum">Thirty days of practice (a tiny curriculum)</h2>
+<p>If you want to <em>own</em> this skill, here's an honest, low-effort month of practice — one small script per week, real ones you might actually want:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 1:</strong> a single-file task (like the renamer, or a "list my files by size" script). Walk the full routine twice. The goal: the sequence feels mechanical, not scary.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 2:</strong> a script that <em>creates</em> files (organizer, report generator). Add output-to-a-new-folder to your default asks. Rollback drill included.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 3:</strong> a script that <em>reads</em> something with columns (CSV of your books, your mileage). Meet silent wrongness deliberately: give it a bad column name on purpose, watch it either catch or miss, then fix it with a Chapter 4 question.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 4:</strong> a script that touches the network (a "check my public IP" or "fetch page title" tool, on data that's yours). Secrets and paths get full checks; offline testing included.</li>
+</ul>
+<p>By week's end, the loop is yours. You'll have handled every category this book covers — renames, creation, structured data, network — and the routine will have shown you both its boring successes and its genuinely useful saves.</p>
+<h2 id="the-last-word">The last word</h2>
+<p>Non-coders in the AI age have a real, unfair problem: everyone can <em>get</em> code now, and almost nobody was taught to <em>use</em> it safely. This book's answer fits in one breath — <strong>read for power, ask for specifics, copy first, run small, watch counts, know your way back</strong> — and stretches over the rest of your life as a habit. AI will keep handing you code. You'll keep being the one at the keyboard. Take the ten minutes; be the one in charge.</p>
+<p>If you want to go deeper anywhere, the two companion manuals wait: <em>Free AI Coding with OpenCode</em> for the full prompting-and-reviewing workflow (and Git), and <em>Terminal Comfort Guide</em> for the black-window basics. Happy reading — and even happier rolling back.</p>
+<hr /></section><hr>
+</main>
+<div class="footer">Reading AI-Written Code · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 6 — Keeping Originals Safe · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 6 — Keeping Originals Safe</h1>
+<div class="chapter-meta">Chapter 6 · ~1,403 words · ~6 min read</div>
+<p>Everything in Chapters 1–5 only works if one thing is guaranteed underneath: <strong>when a run goes wrong, the originals survive.</strong> This chapter is about making that guarantee boring, cheap, and repeatable. It's written for people whose data includes irreplaceables — years of photos, a manuscript only they wrote, their business's records — and who have deleted something once in their life and never want to feel that again.</p>
+<h2 id="the-golden-rule">The golden rule</h2>
+<blockquote>
+<p><strong>The originals always have a copy that no run, no script, no AI, and no cleaning rampage can touch — at least until the thing you're doing has been trusted.</strong></p>
+</blockquote>
+<p>Notice what this rule does <em>not</em> say. It does not say "back up everything constantly in six places" (burnout) or "never touch your files again" (not possible). It says: for the specific, narrow window in which you are giving an AI-written script its audition, your originals belong to a <em>different universe of files</em> — one the script could not reach if it took a wrong turn. The window closes when the script is trusted (Chapters 5's criteria) and you resume normal life.</p>
+<h2 id="the-two-snapshot-move">The two-snapshot move</h2>
+<p>For any project that involves running unfamiliar code near things you care about, spend five minutes on two snapshots:</p>
+<ol>
+<li><strong>The folder snapshot.</strong> A copy of <em>the folder(s) the script might touch</em>, zipped or plain-copied, with the date in the name:
+   <code>bash
+   cp -r myproject myproject-BEFORE-autorename-2026-10-27</code>
+   Vanilla-copy first; fancy tools optional. And do it <em>before</em> running anything, always.</li>
+<li><strong>The everything-might-really-matter snapshot.</strong> For anything you'd be devastated to lose — books, photos, business records — one copy on a <em>different device or drive</em> (a second disk, a USB stick, a family computer). Two devices, not two folders. That's the "3-2-1-lite": 1 = working copy, 2 = a copy somewhere else, and ideally, 3 = history (more versions than just latest).</li>
+</ol>
+<p>And for anything you'd be <em>professionally</em> devastated to lose, go further. But no amount of online-only redundancy makes up for skipping the local rehearsal run — Chapter 5's playground — because backup protects against loss, and a rehearsed dry run protects against <em>breakage</em>, which is what an AI-written script most likely does.</p>
+<p>Three rules for naming snapshots, because respect for future-you is the actual mechanism:</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Date-first, purpose-second (<code>2026-10-27-BEFORE-autorename</code>)</td>
+<td>Sorts historically, tells you what it's <em>protecting against</em>.</td>
+</tr>
+<tr>
+<td>Say <code>BEFORE-</code> not <code>backup-</code></td>
+<td>"Backup" is vague; <code>BEFORE</code> literally states what it lets you <em>return to</em>.</td>
+</tr>
+<tr>
+<td>Never snapshot into the same folder being processed</td>
+<td>A <code>cp</code> inside the same tree gets swept up by the very deleting/cleaning script you fear. Snapshot to <em>outside</em> the tree.</td>
+</tr>
+</tbody>
+</table>
+<p>That third rule avoids a real scenario worth naming: <strong>the snapshot that eats itself.</strong> Copy <code>/photos</code> to <code>/photos/BACKUP-FROM-2026-10-27</code> and then run a folder-wide rename, and the rename will <em>also rename the snapshot's files</em>, or worse, the cleaner will treat the extras as clutter. Outside-the-tree copies only.</p>
+<h2 id="versioning-as-superpower-a-friendly-intro">Versioning as superpower (a friendly intro)</h2>
+<p>Snapshots are the beginner's superpower; <strong>version control</strong> is the superpower's superpower — one tool, <code>git</code>, that snapshots <em>everything, constantly, automatically, with an undo.</em> If this sounds like it's for programmers: yes, but it's also for you, and it pairs with this book's mission better than almost anything else in computing. Two options worth knowing about:</p>
+<ul>
+<li><strong>Word-level history</strong> (Word, Google Docs, Notion, etc. all keep edit history). If your project lives in <em>documents</em>, you already have a partial safety net. Use it — it's free.</li>
+<li><strong>Git</strong> (the real thing). If you'll keep working with AI on projects of files, spend one evening learning <code>git init</code>, <code>git add -A</code>, <code>git commit -m "before trying the AI script"</code>, <code>git restore .</code> from the <em>Free AI Coding with OpenCode</em> handbook, Chapter 6. That sequence is "save a restoration point; return to it," and it works at <em>every</em> level: project code, prompts, drafts.</li>
+</ul>
+<p>To net it out at beginner scale: <strong>a fresh snapshot before every first run; a git restore-point if the project is code-heavy.</strong> You don't need to be a Version Control Person to be safe; you need to be a Person Who Takes Two Snapshots. And since the philosophy of this book is cheap habits over perfect systems, one habit — <strong>"snapshot before first run"</strong> — is honestly enough to cover 90% of the ways an AI script can go wrong.</p>
+<h2 id="what-keeping-originals-means-for-inputs-vs-code">What "keeping originals" means for <em>inputs</em> vs. <em>code</em></h2>
+<p>Keep these two kinds of precious separate — they don't survive the same way:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Examples</th>
+<th>What to protect</th>
+<th>Why different</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Your data (inputs)</strong></td>
+<td>photos, manuscripts, spreadsheets, photos again, <em>photos</em></td>
+<td>Snapshots + out-of-tree copy; playground rehearsals; dry runs</td>
+<td>Irreplaceable; and the <em>first</em> thing scripts run over</td>
+</tr>
+<tr>
+<td><strong>The script (code)</strong></td>
+<td><code>safe_rename.py</code>, the AI's many versions</td>
+<td>Version history + the chat log itself</td>
+<td>Re-generatable. Worst case you re-ask the AI.</td>
+</tr>
+</tbody>
+</table>
+<p>A consequence worth making explicit: <strong>when a run looks wrong, the script is the expendable thing.</strong> Delete it without ceremony — you can re-ask. The data is the thing you saved snapshots for. Beginners sometimes protect code feelings — "I spent 20 prompts getting this perfect" — and forget the data. Scripts are disposable; data is forever. (The flip side is a warm note: keeping the <em>prompt that worked</em> is far more valuable than keeping the script — the prompt is short, readable by humans, and can re-create the script on any AI. Worth telling yourself that when you archive code you might discard.)</p>
+<h2 id="the-verified-restore-habit">The verified-restore habit</h2>
+<p>A snapshot is only a safety net if you know how to fall into it. Once — once is enough, ever — do a <strong>restore rehearsal</strong>:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Snapshot a folder.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Delete (or modify) some files in the <em>working copy</em> on purpose.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Restore the contents from the snapshot — <code>cp -r snapshot-things/. working-folder/</code> — or open the zip and copy back.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Confirm everything came back, then close the laptop, satisfied.</li>
+</ul>
+<p>Ten minutes. The day you actually need it, it goes well, because you've done it when nothing was at stake. This is the same trick fire drills use, adapted for files. (If your backups live on another device or drive, restore from <em>that</em> during the drill, so you've proven the <em>whole</em> path, not just the copy-getting step.)</p>
+<h2 id="anti-patterns-how-beginners-accidentally-skip-protection">Anti-patterns: how beginners accidentally skip protection</h2>
+<table>
+<thead>
+<tr>
+<th>Anti-pattern</th>
+<th>What happens</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Working directly on originals "because it's just a rename"</td>
+<td>Renames can collide, truncate, or mis-target; rename is still <em>changing</em> them</td>
+<td>Playground first; originals only after auditions pass</td>
+</tr>
+<tr>
+<td>Snapshot inside the folder being processed</td>
+<td>Snapshot gets mutated by the script</td>
+<td>Snapshot <em>outside</em> the tree</td>
+</tr>
+<tr>
+<td>"It'll be fine, it's a dry run"</td>
+<td>…for the run you did. But the third argument you passed changed the run's <em>mode</em></td>
+<td>Snapshot before <em>every</em> first run of a new version</td>
+</tr>
+<tr>
+<td>Snapshot stack-of-doom (14 <code>BEFORE-</code> copies, all outdated)</td>
+<td>None current; restoration becomes archaeology</td>
+<td>Keep the two most relevant; archive the rest into one dated zip</td>
+</tr>
+<tr>
+<td>Only backup = same drive, different folder</td>
+<td>Drive dies, both die</td>
+<td>Second device or drive for anything devastating-to-lose</td>
+</tr>
+<tr>
+<td>The AI offers to "clean up" your working folder as part of a bigger task</td>
+<td>Unrelated files get deleted — the silent wrongness pattern</td>
+<td>The phrase that always works: "Do not delete <strong>anything</strong>. Leave every file you didn't create. I will clean up."</td>
+</tr>
+</tbody>
+</table>
+<p>That last one deserves underlining. It is possibly the single most useful sentence in this book to say to an AI when you mean it:</p>
+<blockquote>
+<p><strong>"Do not delete anything. Do not move anything you didn't create. Tell me what you would delete, and I'll decide."</strong></p>
+</blockquote>
+<h2 id="where-this-leaves-the-overall-picture">Where this leaves the overall picture</h2>
+<p>By the end of Chapter 6, the safety stack looks like this: read a little (Ch 2), distrust the confident (Ch 3), ask what breaks (Ch 4) — then <em>snapshot</em>, <em>rehearse in the playground</em>, <em>watch the counts</em>, <em>run twice</em>. Two chapters remain on the safety core: where scripts usually go wrong specifically (Ch 7: secrets and paths), and the routine that ties it all together in ten minutes (Ch 8: copy-run-rollback). The finish line is close, and you're doing fine.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="05-testing-before-you-rely-on-it.html">← Chapter 5 — Testing Before You Rely on It</a>
+<a href="07-secrets-and-paths-to-check.html">Chapter 7 — Secrets and Paths to Check →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 6 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 10 — Safety Checklist &amp; Glossary · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 10 — Safety Checklist &amp; Glossary</h1>
+<div class="chapter-meta">Chapter 10 · ~1,436 words · ~7 min read</div>
+<p>The wrap-up: one printable page of routine, one pocket dictionary. This chapter is designed to be used <em>forever</em> — bookmark it, print it, tape it near the monitor.</p>
+<h2 id="the-one-page-safety-checklist">The one-page safety checklist</h2>
+<p>This is Chapters 1–8 compressed to what you actually need at the keyboard. Photocopy-friendly on purpose.</p>
+<blockquote>
+<h3 id="before-you-run-ai-written-code-the-whole-book-one-page">Before you run AI-written code (the whole book, one page)</h3>
+<p><strong>Reading (about 5 minutes — Chapters 1–2)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does the purpose match the promise? (File name, top comments, function names)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Imports tell you its powers: files? network? other programs? (Danger words: <code>rmtree</code>, <code>rm -rf</code>, <code>"w"</code> overwrite, <code>subprocess</code>, <code>curl</code> piped into <code>sh</code>, <code>push --force</code>)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Loops over <em>everything</em>? Conditions guarding destructive lines? Can I name each <code>?</code> and unresolved line? (Those go on the ask list)</li>
+</ul>
+<p><strong>Questioning (3 minutes — Chapters 3–4)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Any "trust me" phrases in the conversation? ("just run it", "I tested it", "it's safe") Decoded &amp; converted into specific checks?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Pre-mortem asked: <em>what could this break, and what would I notice?</em></li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Counts, undo path, network talks, and secrets covered. Simplest version?</li>
+</ul>
+<p><strong>COPY (2 minutes — Chapters 6–7)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Snapshot the folders it might touch — <em>outside</em> the tree, named <code>YYYY-MM-DD-BEFORE-something</code></li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Secret sweep: no key-shaped strings in code; nothing sensitive in its blast radius; secrets live in env/<code>.env</code>, never in code, never in chat</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Path sweep: no bare <code>/</code>, <code>C:\</code>, or <code>~</code>; no sneaky <code>..</code>; no delete-wildcards; output goes somewhere <em>new</em>, not over</li>
+</ul>
+<p><strong>RUN (5 minutes, staged — Chapter 5)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Dry run in a playground of copies — count, first few changes, untouched things, skips, all sane</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Mini-real rehearsal (3–5 real files) — output <em>looks</em> right, name by name</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run twice: second run = "nothing to do" or demonstrably safe</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Real run: expect it quiet. Counts match plan. Nothing touched that shouldn't have been.</li>
+</ul>
+<p><strong>ROLLBACK (2 minutes, drilled — Chapter 8)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Undo path nameable from memory right now</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Drill once a month (and after any script update): roll back a rehearsal run, verify identical, re-run</li>
+</ul>
+<p><strong>When surprised:</strong> stop → describe the surprise in plain words to the AI → re-rehearse → re-run. Never "keep going regardless"; surprises are cheap caught at a dry run and expensive ignored.</p>
+</blockquote>
+<h3 id="the-30-second-version-memorize-this">The 30-second version (memorize this)</h3>
+<blockquote>
+<p><strong>Read for power, ask for specifics, copy first, run small, watch counts, know your way back.</strong></p>
+</blockquote>
+<h2 id="the-pocket-glossary">The pocket glossary</h2>
+<p>Plain-English definitions, alphabetized. Cross-references point at the chapter that teaches it in context.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Absolute path</strong></td>
+<td>A file's location written in full from the top (<code>C:\Users\you\…</code>, <code>/home/you/…</code>). Predictable, but breaks if moved to another machine. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>API key / token</strong></td>
+<td>A password-like string identifying you to a service. Treat like cash: never in code, chat, or screenshots. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Argument / flag</strong></td>
+<td>Extra words after a command that change its behavior, like <code>--apply</code> or <code>--dry-run</code>.</td>
+</tr>
+<tr>
+<td><strong>Blast radius</strong></td>
+<td>Everything a script <em>could</em> touch if it misbehaved. Reading code = sizing the blast radius before running it. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>Branch</strong></td>
+<td>In Git, a parallel line of work you can try and throw away without affecting the main one.</td>
+</tr>
+<tr>
+<td><strong>Code / program / script</strong></td>
+<td>Text that is instructions for a computer. A <em>script</em> is a one-file, one-job program. (Ch 1)</td>
+</tr>
+<tr>
+<td><strong>Command line / terminal</strong></td>
+<td>The text window where you type commands directly to your computer.</td>
+</tr>
+<tr>
+<td><strong>Condition (<code>if</code>)</strong></td>
+<td>Code that acts only when something is true. The fence around dangerous actions. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>Dry run / plan mode</strong></td>
+<td>A run that shows what <em>would</em> happen without doing it. Chapter 5's cornerstone; also Chapter 8's RUN step 1.</td>
+</tr>
+<tr>
+<td><strong>Env var (.env)</strong></td>
+<td>A place to store secrets <em>outside</em> your code — the safe house for API keys. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Function</strong></td>
+<td>A named mini-recipe inside a script, callable by name. Reading function names = skimming the table of contents. (Ch 1)</td>
+</tr>
+<tr>
+<td><strong>Git</strong></td>
+<td>Industry-standard version control: perfect memory + undo for a folder of files. (Ch 6; full walkthrough in <em>Free AI Coding with OpenCode</em>, Ch 6)</td>
+</tr>
+<tr>
+<td><strong>Idempotent</strong></td>
+<td>Safe to run twice — the second run does nothing new. Chapter 5's run-twice test checks for it.</td>
+</tr>
+<tr>
+<td><strong>Import</strong></td>
+<td>A line borrowing someone else's code. Reading imports = a script's power inventory. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>Loop (<code>for</code>/<code>while</code>)</strong></td>
+<td>Code that repeats — once per item or until told to stop. Where effects multiply. (Ch 2)</td>
+</tr>
+<tr>
+<td><strong>No-gap version</strong></td>
+<td>A design where nothing is deleted until its replacement fully exists. (Ch 3)</td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td>Where something lives on disk, written down. Absolute (pinned) vs relative (relative to where you run it). (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>PHI</strong></td>
+<td>Protected Health Information — patient data. Nurses and other health workers: PHI is never a chat input, ever. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Playground</strong></td>
+<td>A scratch folder of copies and fakes where first runs happen. (Ch 5)</td>
+</tr>
+<tr>
+<td><strong>Pre-mortem</strong></td>
+<td>Asking "what could this break?" <em>before</em> writing/running — imagining the failure first. (Ch 4)</td>
+</tr>
+<tr>
+<td><strong>Relative path</strong></td>
+<td>A location written relative to <em>where you are now</em> (<code>photos</code>, <code>../data</code>). Flexible, but means different things from different places. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Resolve (a path)</strong></td>
+<td>Turn a possibly-relative path into a definite one. Common first defense in careful scripts. (Ch 9)</td>
+</tr>
+<tr>
+<td><strong>Rollback</strong></td>
+<td>Going back to the pre-run state via snapshot, Git, or a reverse step. Rehearsed, not hoped for. (Ch 6, 8)</td>
+</tr>
+<tr>
+<td><strong>Secret</strong></td>
+<td>Anything that lets someone be/unlock you: keys, tokens, passwords, cookies, PHI, money-access strings. (Ch 7)</td>
+</tr>
+<tr>
+<td><strong>Silent wrongness</strong></td>
+<td>A failure with no crash — the worst kind. Count checks and plan-output defeat it. (Ch 5)</td>
+</tr>
+<tr>
+<td><strong>Snapshot</strong></td>
+<td>A full copy of a folder (or Git commit) taken before doing something risky, named so future-you understands it. (Ch 6)</td>
+</tr>
+<tr>
+<td><strong>Terminal</strong></td>
+<td>See command line.</td>
+</tr>
+<tr>
+<td><strong>Trust-me moment</strong></td>
+<td>When confidence is offered instead of evidence — in AI words ("just run it") or AI code (delete-then-create with no guard). (Ch 3, 4)</td>
+</tr>
+<tr>
+<td><strong>Variable</strong></td>
+<td>A labeled box holding one piece of information inside a program. (Ch 1)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="thirty-days-of-practice-a-tiny-curriculum">Thirty days of practice (a tiny curriculum)</h2>
+<p>If you want to <em>own</em> this skill, here's an honest, low-effort month of practice — one small script per week, real ones you might actually want:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 1:</strong> a single-file task (like the renamer, or a "list my files by size" script). Walk the full routine twice. The goal: the sequence feels mechanical, not scary.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 2:</strong> a script that <em>creates</em> files (organizer, report generator). Add output-to-a-new-folder to your default asks. Rollback drill included.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 3:</strong> a script that <em>reads</em> something with columns (CSV of your books, your mileage). Meet silent wrongness deliberately: give it a bad column name on purpose, watch it either catch or miss, then fix it with a Chapter 4 question.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Week 4:</strong> a script that touches the network (a "check my public IP" or "fetch page title" tool, on data that's yours). Secrets and paths get full checks; offline testing included.</li>
+</ul>
+<p>By week's end, the loop is yours. You'll have handled every category this book covers — renames, creation, structured data, network — and the routine will have shown you both its boring successes and its genuinely useful saves.</p>
+<h2 id="the-last-word">The last word</h2>
+<p>Non-coders in the AI age have a real, unfair problem: everyone can <em>get</em> code now, and almost nobody was taught to <em>use</em> it safely. This book's answer fits in one breath — <strong>read for power, ask for specifics, copy first, run small, watch counts, know your way back</strong> — and stretches over the rest of your life as a habit. AI will keep handing you code. You'll keep being the one at the keyboard. Take the ten minutes; be the one in charge.</p>
+<p>If you want to go deeper anywhere, the two companion manuals wait: <em>Free AI Coding with OpenCode</em> for the full prompting-and-reviewing workflow (and Git), and <em>Terminal Comfort Guide</em> for the black-window basics. Happy reading — and even happier rolling back.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="09-annotated-walkthrough.html">← Chapter 9 — An Annotated Walkthrough</a>
+<span></span>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 10 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

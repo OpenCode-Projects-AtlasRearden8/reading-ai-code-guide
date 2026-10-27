@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 3 — Spotting the &quot;Trust Me&quot; Moments · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 3 — Spotting the &quot;Trust Me&quot; Moments</h1>
+<div class="chapter-meta">Chapter 3 · ~1,626 words · ~7 min read</div>
+<p>Somewhere in every AI-assisted project there comes a moment when the confident voice says something like:</p>
+<blockquote>
+<p>"This will work — I've handled the edge cases. Just run it."</p>
+</blockquote>
+<p>That sentence is the <strong>"trust me" moment.</strong> Not because the AI is lying — it isn't, it's usually <em>sincere</em> — but because it can't know. It cannot see your folders. It cannot run anything, ever, anywhere. It has no memory of last week's broken attempt. Every claim it makes about code "working" is a prediction about a world it has never touched, delivered in the confident tone of someone who has.</p>
+<p>This chapter teaches you to hear that tone. Not to distrust AI generally — it's a phenomenal, mostly-reliable assistant — but to react to confidence the way experienced computer people do: <strong>confidence is interesting information; it is not evidence.</strong></p>
+<h2 id="why-the-ai-sounds-so-sure">Why the AI sounds so sure</h2>
+<p>Generative models are trained to produce <em>likely-sounding text</em>. When you ask "will this work?", the statistically likely answer is an assured one, the same way autocomplete completes "Thanks so mu—" with "ch!" Look at what the AI is without anthropomorphizing it: a master of <em>the shape confidence takes in text</em>. It will produce shape-confidence even about things that fail immediately when run.</p>
+<p>Three deep reasons AI claims are weaker than they sound:</p>
+<table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>The plain-English version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>It has never executed anything</td>
+<td>It can't get a runtime error, watch a crash, or discover a typo. It uses languages it has only ever <em>read</em>.</td>
+</tr>
+<tr>
+<td>It doesn't know your machine</td>
+<td>Your folders, your filenames, your half-converted backups, your Windows quirks — absent from its world unless a previous message said so.</td>
+</tr>
+<tr>
+<td>It predicts <em>plausible</em>, not <em>true</em></td>
+<td>"It works!" is plausible-sounding and gets generated even if the code contains an obvious bug. Plausibility is the currency; truth must be supplied by you.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="phrase-by-phrase-decoder">Phrase-by-phrase decoder</h2>
+<p>Treat these as five-second reactions: notice the phrase, file the message under "needs a specific check." Phrases are ordered roughly by frequency.</p>
+<table>
+<thead>
+<tr>
+<th>The AI says</th>
+<th>What it can actually mean</th>
+<th>What you respond</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Just run this."</td>
+<td>"I wrote something."</td>
+<td>"Not yet — walk me through what it touches, then I'll dry-run it."</td>
+</tr>
+<tr>
+<td>"I've tested it / it works"</td>
+<td>"I believe it works." (It cannot have any test evidence.)</td>
+<td>"Show me exactly how to test it, step by step, and what output to expect."</td>
+</tr>
+<tr>
+<td>"This is safe."</td>
+<td>"This is safe <em>for a file layout I imagined</em>."</td>
+<td>"What's the worst thing it does if a file is missing / named weird / already up to date?"</td>
+</tr>
+<tr>
+<td>"I've handled the edge cases"</td>
+<td>"I can list plausible edge cases."</td>
+<td>"List the edge cases you handled, then the three you <em>didn't</em>."</td>
+</tr>
+<tr>
+<td>"It's fine on my end"</td>
+<td>Nothing. There is no end.</td>
+<td>(Silently note it; move to Chapter 5.)</td>
+</tr>
+<tr>
+<td>"Don't worry about that warning."</td>
+<td>"The warning is one I see often."</td>
+<td>"Explain the warning in plain words. I'll paste it if it shows for me."</td>
+</tr>
+<tr>
+<td>"Should work now." (after a fix)</td>
+<td>"I changed something."</td>
+<td>"Great — what changed, and how do I re-test the same way?"</td>
+</tr>
+<tr>
+<td>"You don't need to back anything up for this."</td>
+<td>A guess about your pain tolerance</td>
+<td>"I'm backing up regardless. Where should the snapshot live?"</td>
+</tr>
+<tr>
+<td>"This minimal version is temporary, we'll harden it later"</td>
+<td>Next week never comes</td>
+<td>"Fine — but what does the temporary version refuse to touch?"</td>
+</tr>
+<tr>
+<td>"Error X is harmless."</td>
+<td>"Error X is common."</td>
+<td>"Common <em>when</em>, on what setup? What should I do if mine persists?"</td>
+</tr>
+</tbody>
+</table>
+<p>Notice the pattern in the responses: <strong>they all convert a feeling into a test.</strong> The decoder's whole philosophy: never accept a claim about the future when you can turn it into a check about the present.</p>
+<h2 id="trust-me-code-patterns-the-ones-without-words">Trust-me code patterns (the ones without words)</h2>
+<p>Some trust-me moments hide inside the <em>code itself</em>, no confident sentence needed. Memorizing these shapes is high-yield — they're the classic "worked perfectly in the demo, destroyed my Tuesday in practice" patterns.</p>
+<table>
+<thead>
+<tr>
+<th>Code/command shape</th>
+<th>Trust-me-ness</th>
+<th>Why it deserves a second look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deletes before creating (<code>rm</code>, <code>del</code>, <code>rmtree</code>, then regenerate)</td>
+<td>High</td>
+<td>If the regenerate fails halfway, you're left with <em>fewer</em> files than before. Correct version: build the new thing fully first, then swap.</td>
+</tr>
+<tr>
+<td>Downloads-and-runs in one line (<code>curl</code> piped into <code>bash</code>/<code>sh</code>, or <code>.sh</code>/<code>.ps1</code> scripts fetched and executed)</td>
+<td>The max</td>
+<td>You skipped every safety layer this book has. Refuse, or download first, read briefly, run in a sandbox copy.</td>
+</tr>
+<tr>
+<td>Overwrites existing files (<code>open(x, "w")</code>, <code>&gt;</code> redirection, <code>WriteAllText</code>) without a "does it exist?" check</td>
+<td>High</td>
+<td>The old version of your file is being silently replaced forever.</td>
+</tr>
+<tr>
+<td><code>git push --force</code> / force flags anywhere</td>
+<td>Very high</td>
+<td>"Trust me" aimed not at files but at your <em>history</em>. Refuse unless you personally understand exactly why.</td>
+</tr>
+<tr>
+<td>Long, clever "one-liners" accomplishing many things</td>
+<td>Medium-high</td>
+<td>Compact = hard to read = your reader's method can't see boundaries. Ask for the boring twelve-line version.</td>
+</tr>
+<tr>
+<td>Code that pipes your <strong>project contents</strong> into the network (uploading before asking)</td>
+<td>Very high</td>
+<td>Chapter 7's domain; a trust-me moment with your secrets attached.</td>
+</tr>
+<tr>
+<td>Anything with a comment saying <code># TODO: add error handling</code></td>
+<td>Explicit</td>
+<td>The boundary it will need (Chapter 2) is openly missing.</td>
+</tr>
+<tr>
+<td>Scheduled/background execution (<code>cron</code>, <code>while True:</code>, "watcher", <code>--daemon</code>)</td>
+<td>High</td>
+<td>Runs when you're not watching. The inverse of the copy-run-rollback philosophy.</td>
+</tr>
+<tr>
+<td>Changes many files in one pass ("batch," "bulk," "all files in")</td>
+<td>High</td>
+<td>Destructive scale. The right version has a <code>--limit 3</code> for a rehearsal (Ch 5).</td>
+</tr>
+</tbody>
+</table>
+<p>Two classics deserve their own paragraphs because they're so common.</p>
+<p><strong>The delete-then-recreate pattern.</strong> An AI writes <code>git</code> workflows, build scripts, and cache-cleanup scripts this way constantly: remove the old thing, then re-make it. In the AI's imagined world the second half always succeeds. On your Tuesday the second half fails — network hiccup, typo'd path, a file already open in another program — and now you have deleted your originals <em>and</em> have no replacements. The ask that fixes it: <strong>"Rewrite so nothing is deleted until its replacement fully exists and is verified. Then delete the old one."</strong> That request is so useful it has a folk name in our house: "no-gap version."</p>
+<p><strong>The perfect-world input assumption.</strong> The script reads <em>one</em> file. Not zero. Not two. Format exactly as imagined: field names spelled right, dates consistent, headers present. Then it meets your actual CSV where someone typed the date three different ways and one row is empty. The failure mode isn't just a crash — it's a <em>silent</em> drift: the script skips rows, or honestly processes 97 of 100 without telling you which. The ask that fixes it: <strong>"Before doing real work, verify the input: right file, right columns, non-empty, and report how many rows you'll process — then compare with how many you did."</strong></p>
+<h2 id="the-ai-repeated-my-own-mistake-moment">The AI repeated-my-own-mistake moment</h2>
+<p>A special trust-me worth naming. When you paste your own broken attempt (or the previous AI's answer) into a chat and the new answer confidently copies its assumptions — the wrong path, the wrong column name, the invented library — the new answer inherits those bugs with total confidence. Signs: the answer starts "Great code!" or "Your approach is basically right" — then keeps your bug intact. Fixes: include the <em>original goal</em>, not just the broken code ("I wanted X; this claims X; here's the full error"); and when correcting a previous failure, explicitly restate what reality was ("the folder is named <code>photos</code> not <code>Photos</code>").</p>
+<h2 id="what-a-real-trust-me-escape-looks-like">What a real "trust me" escape looks like</h2>
+<p>Watch the move happen — the moment where a beginner's instinct beats a confident tone. Scenario: you ask for a script that resizes images. The AI answers with beautiful code and says "This handles everything — just replace the folder path and run it."</p>
+<p>Your instinct: <em>"everything" — the word "everything" is doing a lot of work there.</em></p>
+<p>The escape, in 45 seconds of typing:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "What does 'everything' include, specifically? What are three things it does <em>not</em> handle?"</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "What folder does it write the new images to — same folder, new subfolder, or does it delete the originals?"</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "Is there a mode that processes exactly three images as a rehearsal so I can eyeball them before running the rest?"</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> "If a file in the folder is corrupt or uninstall-sized, does it crash, skip, or stop the whole batch?"</li>
+</ul>
+<p>That's not professional paranoia; that's four cheap questions that take less time than the confident answer took to generate. Chapter 4 turns this instinct into a full playbook. For now, keep the sentence: <strong>listen for the confident verbs; answer them with specific, small, ever-so-slightly skeptical questions.</strong></p>
+<h2 id="the-honest-baseline-most-ai-code-is-fine">The honest baseline: most AI code is fine</h2>
+<p>It's easy to read this chapter as paranoia. It isn't. The majority of small scripts an AI writes for simple file tasks are <em>fine</em> — and the trust-me habits in this book are what let you say that with your own eyes instead of a leap of faith. You're not becoming a skeptic; you're becoming a <strong>calm verifier</strong> — somebody whose confidence comes from tests run, not vibes received. That disposition will serve you far beyond this book's subject.</p>
+<p>Next up: turning that disposition into the exact questions to ask.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="02-reading-code-you-cannot-write.html">← Chapter 2 — Reading Code You Cannot Write</a>
+<a href="04-asking-what-could-break.html">Chapter 4 — Asking What Could Break →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 3 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

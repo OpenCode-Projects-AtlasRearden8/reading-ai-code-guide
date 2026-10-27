@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 5 — Testing Before You Rely on It · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 5 — Testing Before You Rely on It</h1>
+<div class="chapter-meta">Chapter 5 · ~1,548 words · ~7 min read</div>
+<p>You've read the code (Chapter 2), heard the trust-me claims (Chapter 3), and gotten the risk list (Chapter 4). Now comes the step that actually earns your confidence: <strong>running the thing — carefully.</strong> This chapter is the linker between "code that exists" and "code I can rely on," and it's built around one sentence: <strong>test in a classroom, not the kitchen.</strong> You never want a first-ever run aimed at files you care about. Practice on the copies and the fakes; build confidence cheaply; <em>then</em> aim it at the real thing.</p>
+<h2 id="the-playground-habit">The playground habit</h2>
+<p>Create a <strong>playground folder</strong> — a scratch copies-area for rehearsal runs — outside your real data. Name it something unmistakable, like <code>00-playground</code>. Inside it, build small fakes that imitate your real situation badly <em>on purpose</em>:</p>
+<table>
+<thead>
+<tr>
+<th>Fake to include</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A copy of 3—5 real files (copies — copies, as Chapter 6 will hammer)</td>
+<td>The closest thing to the real test, run on real data without risk.</td>
+</tr>
+<tr>
+<td>One <strong>empty file</strong></td>
+<td>Catches the perfect-world assumption (Ch 3).</td>
+</tr>
+<tr>
+<td>One file with a <strong>long or odd name</strong> (<code>IMG_2026-??-01 (final) (final)v2.jpg</code> — spaces, parentheses, symbols)</td>
+<td>Filenames break more scripts than any other cause.</td>
+</tr>
+<tr>
+<td>One file whose type the script <strong>surely didn't expect</strong> (a <code>.txt</code> in your photo folder)</td>
+<td>Finds out whether it skips gracefully or crashes.</td>
+</tr>
+<tr>
+<td>One <strong>duplicate</strong> (same content, two names, or the same name twice in different subfolders)</td>
+<td>Catches overwrite and dedupe bugs.</td>
+</tr>
+</tbody>
+</table>
+<p>Five minutes of setup, used forever. Every script you ever get from an AI gets its first run here, before it ever meets <code>/photos</code>. Bonus: a playground is exactly where the walkthrough in Chapter 9 does its first run.</p>
+<h2 id="the-dry-run">The dry run</h2>
+<p>A <strong>dry run</strong> is a run that performs no changes: it shows what <em>would</em> happen. Every script in this book's universe should have one. Use the pre-mortem question from Chapter 4 ("can it run in a mode that changes nothing?") and be persistent: dry runs are easy for the AI to add and hideously valuable to have.</p>
+<p>To retrieve facts from an unknown script: check for <code>--help</code> (Unix-y scripts often expose a help screen), or just skim the code for words like <code>dry</code>, <code>plan</code>, <code>--apply</code>, or a comment that says "default is dry-run." If a script has <em>no</em> dry run and you want one, the <em>make it default</em> trick works wonders: ask for "the safest mode to be the default, with a flag like <code>--apply</code> to allow real changes." Never add the reverse. Defaults are habits, and habits should be safe.</p>
+<p>What a good dry run shows:</p>
+<ul>
+<li>The <strong>list</strong> of changes it would make (before → after)</li>
+<li>A <strong>count</strong> ("42 files") — so you can compare with your expectation ("should be 43 — why one less?")</li>
+<li>Any <strong>skips</strong> ("2 files left untouched because…")</li>
+</ul>
+<p>Reading a dry run is a skill of its own, and it's Chapter 2's four questions again, but with reality supplying the answers this time: what will it take in, what will it change (now visible!), what does it touch, when does it stop. You should be able to answer "does this dry run look like what I asked for?" in one yes/no sentence. If the answer is close-but-not-quite, stop running things — that discrepancy you noticed is <em>exactly</em> what Chapter 4's risk list was asking you to find.</p>
+<h2 id="sample-runs-small-to-large">Sample runs, small to large</h2>
+<p>When something has a dry run, add rehearsal sizes: deliberately run it on a tiny subset of <em>real</em> data before letting it loose on the whole. Ways to do it, cheapest first:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Make a <strong>mini real folder</strong>: copy 3 real files into <code>00-playground/mini-real/</code>, run there.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Use a <strong>limit flag</strong> if the script has one (<code>--limit 3</code>, <code>--max 5</code>) — a good AI adds these if asked.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run on the playground's deliberately weird fakes first: empty file, longer names, duplicates.</li>
+</ul>
+<p>Reading order matters: fakes catch <em>crashes and logical errors</em>; mini-real catches <em>assumption errors</em> (filenames you didn't think about, content quirks). Run both. It's the difference between "the recipe has no impossible steps" and "the recipe is wrong for <em>my</em> kitchen's ingredients."</p>
+<h2 id="what-to-actually-watch">What to actually watch</h2>
+<p>Non-programmers watching their first run tend to look at the end ("did it finish?") instead of the middle. Train yourself on these four:</p>
+<table>
+<thead>
+<tr>
+<th>Watch</th>
+<th>Healthy looks like</th>
+<th>Unhealthy looks like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Number processed</strong></td>
+<td>Matches the count you had</td>
+<td>97 of 100, unexplained; or 1,037 when you have 42</td>
+</tr>
+<tr>
+<td><strong>First few changes</strong></td>
+<td>You can <em>name</em> each one as right</td>
+<td>"Wait, why is that file in the list?"</td>
+</tr>
+<tr>
+<td><strong>End state</strong></td>
+<td>Files you didn't expect to touch are… untouched</td>
+<td>Mtime of your original files changed; things <em>lower</em> in the folder tree moved</td>
+</tr>
+<tr>
+<td><strong>Skips and warnings</strong></td>
+<td>Skips have reasons printed</td>
+<td>Empty, or "Warning (suppressed) x214"</td>
+</tr>
+</tbody>
+</table>
+<p>The silent-nothing failure is the sneakiest: the script finishes instantly, prints nothing, and claims success. It did nothing wrong (nothing at all) — wrong folder, wrong extension match, permissions blocked. The ask that catches it early: <strong>"End with 'Done: N things changed.'"</strong> A healthy run ends with a number. Then check that number against your own count. (Also note the mirror-image failure: the loud crash that <em>feels worse</em> than the silent nothing but is <em>better</em> for you. A script that stops immediately with an error, having changed nothing yet, is behaving exactly right — that's what Chapter 4's "does it fail gracefully?" answer looks like in the wild.)</p>
+<h2 id="the-run-twice-rule">The run-twice rule</h2>
+<p>If a script is one-run-and-done, add a second run to the audition before you adopt it. Then check whether it:</p>
+<ul>
+<li>Says "nothing to do" (idempotent and correct — the best case)</li>
+<li>Does the same thing again safely overwriting its own earlier output (fine for some tasks)</li>
+<li>Duplicates, corrupts, deletes, or mixes up files (broken — report back to the AI with the run-twice observation)</li>
+</ul>
+<p>Why? Because in real life you <em>will</em> run things twice: out of habit, after an interruption, because "did I even click run?" haunted you. The run-twice check catches the whole accident class for the cost of one extra click on safe data. For the walkthrough in Chapter 9, it's built in; the example script is dry-run-first and refuses to overwrite existing (so it says "already done — nothing to do", which you would read as healthy).</p>
+<h2 id="health-checks-after-adoption">Health checks after adoption</h2>
+<p>Once a script becomes part of your routine — the "this runs every week" script — give it a health check: a tiny, repeatable test that takes 60 seconds and tells you it's still itself:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Same count? (42 files in; 42 files counted.)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Makes the expected <em>kind</em> of change on the playground copy first?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Same rollback path proven? (Extra-good check when the script version <em>changed</em> since last run.)</li>
+</ul>
+<p>Recording it in one line each time (<code>2026-10-27 — run on mini-real: 5 files, correct; dry again: "nothing to do" — healthy</code>) builds a personal log that's both evidence and history; you'll appreciate it the day an update turns the script wrong. Set it up with Chapter 4's closing-habits ask ("write me a short testing checklist").</p>
+<h2 id="when-to-escalate-the-testing-level">When to escalate the testing level</h2>
+<p>Some scripts deserve more than playground+fakes. Escalate when any of these are true:</p>
+<table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Escalate to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>It touches files outside its own folder (anything in <code>Documents</code>, <code>System</code>, your <code>backups</code>)</td>
+<td>Snapshot your originals first — Chapter 6 — <em>before</em> even the dry run</td>
+</tr>
+<tr>
+<td>It talks to the network at all</td>
+<td>Check where exactly (Ch 4 Q5, Ch 7); consider airplane-mode testing for network-optional paths</td>
+</tr>
+<tr>
+<td>It deletes anything, anywhere</td>
+<td><code>no-gap</code> version + rehearsal on 3 files only; count checks after</td>
+</tr>
+<tr>
+<td>Other people depend on the output (family calendar, business books)</td>
+<td>Add a buddy check: someone else skims the output before you rely on it</td>
+</tr>
+<tr>
+<td>It runs unattended (on a schedule, a watcher, a server)</td>
+<td>Run it scheduled-but-in-the-playground first — never first-run unattended on real data</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-one-piece-at-a-time-principle">The one-piece-at-a-time principle</h2>
+<p>If a script does several things at once and one of them is the risky part — say it "renames files and emails you a summary" — it's fine to ask the AI to split it: <strong>"Give me version one: renames only. Version two: adds the email step."</strong> Each piece gets its own audition; the risky piece never hides inside a bigger working thing. Programmers call this modularization; you can call it "one thing at a time, please" and you get the same benefit.</p>
+<h2 id="where-this-chapter-ends-and-chapter-6-begins">Where this chapter ends and Chapter 6 begins</h2>
+<p>Everything here assumed you're playing with <em>copies</em> and <em>fakes</em>. The moment a script is aimed at files your heart cares about — your photos, your writing, your books — you need to know that even a bad run leaves the originals alive. That's Chapter 6: keeping originals safe. It's the chapter that makes everything in 1–5 <em>stress-free</em>, because once originals are guaranteed, mistakes become lessons and nothing is precious. On we go.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="04-asking-what-could-break.html">← Chapter 4 — Asking What Could Break</a>
+<a href="06-keeping-originals-safe.html">Chapter 6 — Keeping Originals Safe →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 5 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

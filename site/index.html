@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Reading AI-Written Code · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark">By Asdale Dynamics, LLC</div></div>
+<main>
+<h1>Reading AI-Written Code</h1>
+<p class="chapter-meta">A non-coder&#x27;s guide to using AI-written code safely</p>
+<p>A plain-English manual for people who get code written <em>for</em> them by AI
+helpers: what code even does, how to read it without being a programmer,
+spotting the <strong>"trust me"</strong> moments, asking what could break,
+testing in a playground before you rely on anything, keeping originals safe,
+and the copy-run-rollback routine that ends with a tool you actually own.
+ Includes an annotated walkthrough of a real, runnable example script —
+plus a printable safety checklist and a pocket glossary.</p>
+<div class="toc-list">
+<h2 style="margin-top:0.4rem">Contents</h2>
+<ul class="chapters" style="margin:0.5rem 0 0">
+<li><div class="ch-title"><a href="index.html">Welcome — Read Me First</a></div><p class="ch-blurb">This book is for anyone who is getting code written for them — by ChatGPT, Claude, Gemini, OpenCode, a friend, or your nephew — but who cannot (and does not want to) become a programmer just to use it safely.</p><p class="ch-blurb">Welcome · ~6 min read</p></li><li><div class="ch-title"><a href="01-what-code-actually-does.html">Chapter 1 — What Code Actually Does</a></div><p class="ch-blurb">Before you can read code safely, you need a working mental model of what code is. Not a computer science model — a kitchen model. Once you have this one analogy, 90% of what confuses beginners about &quot;code&quot; stops being mysterious, and the safety chapters in this book start to feel obvious rather than exotic.</p><p class="ch-blurb">Chapter 1 · ~8 min read</p></li><li><div class="ch-title"><a href="02-reading-code-you-cannot-write.html">Chapter 2 — Reading Code You Cannot Write</a></div><p class="ch-blurb">Chapter 1 gave you the mental model: code is a recipe for a literal-minded cook, and reading means scanning for power and boundaries. This chapter gives you the actual method — a ten-minute, three-pass way to read any AI-written script without being able to write one.</p><p class="ch-blurb">Chapter 2 · ~8 min read</p></li><li><div class="ch-title"><a href="03-spotting-trust-me-moments.html">Chapter 3 — Spotting the &quot;Trust Me&quot; Moments</a></div><p class="ch-blurb">Somewhere in every AI-assisted project there comes a moment when the confident voice says something like:</p><p class="ch-blurb">Chapter 3 · ~7 min read</p></li><li><div class="ch-title"><a href="04-asking-what-could-break.html">Chapter 4 — Asking What Could Break</a></div><p class="ch-blurb">Chapter 3 trained your ear for over-confidence. This chapter gives you the questions — a playbook of asks that, used before running anything, will catch most of what can go wrong. It&#x27;s structured as a conversation you can have with your AI in a few minutes. The questions are also useful, with light adaptation, for a friend or nephew who wrote you a script: the goal is precise communication about risk, not interrogation.</p><p class="ch-blurb">Chapter 4 · ~8 min read</p></li><li><div class="ch-title"><a href="05-testing-before-you-rely-on-it.html">Chapter 5 — Testing Before You Rely on It</a></div><p class="ch-blurb">You&#x27;ve read the code (Chapter 2), heard the trust-me claims (Chapter 3), and gotten the risk list (Chapter 4). Now comes the step that actually earns your confidence: running the thing — carefully. This chapter is the linker between &quot;code that exists&quot; and &quot;code I can rely on,&quot; and it&#x27;s built around one sentence: test in a classroom, not the kitchen. You never want a first-ever run aimed at files you care about. Practice on the copies and the fakes; build confidence cheaply; then aim it at the real thing.</p><p class="ch-blurb">Chapter 5 · ~7 min read</p></li><li><div class="ch-title"><a href="06-keeping-originals-safe.html">Chapter 6 — Keeping Originals Safe</a></div><p class="ch-blurb">Everything in Chapters 1–5 only works if one thing is guaranteed underneath: when a run goes wrong, the originals survive. This chapter is about making that guarantee boring, cheap, and repeatable. It&#x27;s written for people whose data includes irreplaceables — years of photos, a manuscript only they wrote, their business&#x27;s records — and who have deleted something once in their life and never want to feel that again.</p><p class="ch-blurb">Chapter 6 · ~6 min read</p></li><li><div class="ch-title"><a href="07-secrets-and-paths-to-check.html">Chapter 7 — Secrets and Paths to Check</a></div><p class="ch-blurb">Two things cause the real damage when AI-written code goes wrong: secrets (credentials that shouldn&#x27;t be seen, shared, or uploaded) and paths (places in your file system the script shouldn&#x27;t go). Neither one is exotic. Both show up in tiny beginner scripts. Both are checkable in a couple of minutes once you know what to look for. This chapter gives you the two scans that, between them, cover the worst practical outcomes of running code you didn&#x27;t write.</p><p class="ch-blurb">Chapter 7 · ~7 min read</p></li><li><div class="ch-title"><a href="08-the-copy-run-rollback-routine.html">Chapter 8 — The Copy-Run-Rollback Routine</a></div><p class="ch-blurb">Everything so far — reading, distrusting, questioning, testing, snapshots, secret-and-path scans — now folds into one repeatable loop you&#x27;ll run on every piece of AI code you take seriously. It&#x27;s called copy-run-rollback, and once it&#x27;s a habit it will take you about ten minutes, start to finish (fifteen the first few times — that&#x27;s honest and normal). It&#x27;s the routine this whole book exists to teach, and by far the most important muscle here.</p><p class="ch-blurb">Chapter 8 · ~7 min read</p></li><li><div class="ch-title"><a href="09-annotated-walkthrough.html">Chapter 9 — An Annotated Walkthrough</a></div><p class="ch-blurb">Time to watch the whole method happen, start to finish, on a real script. The example in this chapter ships with this book as a runnable file — examples/walkthrough/saferename.py — so you can read the annotations here and then run the actual thing yourself, exactly the way the routine teaches. Nothing in it is theoretical.</p><p class="ch-blurb">Chapter 9 · ~9 min read</p></li><li><div class="ch-title"><a href="10-safety-checklist-and-glossary.html">Chapter 10 — Safety Checklist &amp; Glossary</a></div><p class="ch-blurb">The wrap-up: one printable page of routine, one pocket dictionary. This chapter is designed to be used forever — bookmark it, print it, tape it near the monitor.</p><p class="ch-blurb">Chapter 10 · ~7 min read</p></li>
+</ul>
+</div>
+<h2>One-page edition</h2>
+<p>Prefer the whole book on one page for reading or printing?
+<a href="full-book.html">Read the full single-file edition</a>.</p>
+<h2>Details</h2>
+<table>
+<tr><td>Format</td><td>Welcome page + 10 chapters, built into this static site</td></tr>
+<tr><td>Length</td><td>~17,297 words</td></tr>
+<tr><td>Runnable example</td><td><code>examples/walkthrough/safe_rename.py</code> (dry-run by default)</td></tr>
+<tr><td>License</td><td>MIT (see LICENSE in the repository)</td></tr>
+<tr><td>Companions</td><td><em>Free AI Coding with OpenCode</em> and <em>Terminal Comfort Guide</em></td></tr>
+</table>
+</main>
+<div class="footer">Reading AI-Written Code · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+
+</body>
+</html>

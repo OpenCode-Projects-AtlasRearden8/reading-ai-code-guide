@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 8 — The Copy-Run-Rollback Routine · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 8 — The Copy-Run-Rollback Routine</h1>
+<div class="chapter-meta">Chapter 8 · ~1,481 words · ~7 min read</div>
+<p>Everything so far — reading, distrusting, questioning, testing, snapshots, secret-and-path scans — now folds into one repeatable loop you'll run on every piece of AI code you take seriously. It's called <strong>copy-run-rollback</strong>, and once it's a habit it will take you about ten minutes, start to finish (fifteen the first few times — that's honest and normal). It's the routine this whole book exists to teach, and by far the most important muscle here.</p>
+<h2 id="the-name">The name</h2>
+<p>Three moves:</p>
+<ul>
+<li><strong>COPY</strong> — make the situation copy-safe before anything runs.</li>
+<li><strong>RUN</strong> — execute, starting from the least destructive mode, escalating only as evidence accumulates.</li>
+<li><strong>ROLLBACK</strong> — proven, one-step undo, rehearsed <em>before</em> you need it.</li>
+</ul>
+<p>That's the loop. When something new and untrusted enters your world (an AI script, a new version of a trusted script, first run against a new set of files), you run the loop. When you've nothing new, the loop is short — a quick dry run in the playground a second time, then carry on. The loop is what lets you use AI code as <em>material</em> rather than <em>mystery</em>, which is the actual goal of this book.</p>
+<h2 id="phase-1-copy-2-minutes">Phase 1: COPY (2 minutes)</h2>
+<p>Do these in order. They're cheap, and each one removes a whole class of bad outcomes:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Snapshot the folder(s) the script might touch</strong> — <em>outside</em> the tree, date-first names (Chapter 6). Two minutes; this is the whole safety net.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Check the secrets sweep</strong> (Chapter 7's checklist) — no keys in code, no secrets in the blast radius.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Check the paths sweep</strong> — no bare roots, no <code>..</code> inheritance, no delete-wildcards you didn't discuss.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Read the script's structure</strong> lightly (Chapter 2's three passes — you'll be fast at this now).</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> <strong>Skim the risk list</strong> from Chapter 4's pre-mortem, and refresh memory: <em>what am I watching for?</em></li>
+</ul>
+<p>One crucial nuance for Phase 1: the source of truth here is the <em>latest</em> code. If the AI wrote version 3 while you were sleeping — this happens more than beginners expect, silently editing files — glance at what changed (<code>git diff</code>, or a fresh eyeball pass) before skipping anything. <strong>The trust-me moment restarts with each new version.</strong> There's no "it worked last time" for code you didn't write.</p>
+<h2 id="phase-2-run-5-minutes-staged">Phase 2: RUN (5 minutes, staged)</h2>
+<p>Step 1: <strong>Dry run first.</strong> playground folder (real copies), <code>--dry-run</code> or plan mode on, and watch the output (Chapter 5's four things to watch: counts, first few changes, untouched things, skips).</p>
+<p>Step 2: <strong>Rehearsal run on a small slice of real data.</strong> --limit-3, or a <code>mini-real</code> playground folder. This is the step that catches "wrong assumptions about <em>my</em> files," and it's worth five minutes.</p>
+<p>Step 3: <strong>Run-twice check on the rehearsal set.</strong> Idempotence — Chapter 5's rule — means the second run says "nothing to do." The second run's honesty is one of the best single signals you'll ever get about a script's character.</p>
+<p>Step 4: <strong>The real run.</strong> Against actual files — this should <em>feel anticlimactic</em>: dry run, rehearsal, and run-twice already happened. That's success; not the drama of a first attempt, but the boredom of a prepared one.</p>
+<p>Each step escalates only if the previous one was boring. A surprise anywhere — a count off by one, a file in the plan you didn't expect — <em>stops the routine</em> and sends you back to Chapters 3–4: name the surprise in plain words, ask the AI about it, re-rehearse. Surprises are cheap when caught at a dry run; and exactly as expensive as the stage where you didn't listen.</p>
+<h2 id="phase-3-rollback-2-minutes-or-nothing-if-you-already-did-it">Phase 3: ROLLBACK (2 minutes — or nothing, if you already did it)</h2>
+<p>The rollback isn't an emergency measure; it's a <em>first-class phase</em> of the routine with two requirements:</p>
+<ol>
+<li><strong>It exists.</strong> You can name the exact way you'd undo: restore snapshot; <code>git restore .</code>; delete the outputs folder and re-copy originals; re-run a reverse script if one exists (a "no-gap" design, Chapter 3).</li>
+<li><strong>You've <em>used</em> it once, on purpose.</strong> During Phase 2's rehearsal, sometimes do the undo drill: after rehearsing real-but-throwaway changes, roll back, verify everything's identical, and then re-run. Every 10th run, drill again; and once a month at minimum. It costs two minutes and guarantees your undo knowledge doesn't rust.</li>
+</ol>
+<p>Rollback drills also build a different, quieter thing: <strong>calm.</strong> Non-coders' panic around code comes almost entirely from feeling trapped — "I broke something and I don't know how to unbreak it." The drill teaches your body the way a fire drill does: this is not a cliff, this is a stairway; you have walked it.</p>
+<h2 id="the-checklist-printable">The checklist, printable</h2>
+<p>Here's the whole routine as a one-page checklist. Print it, tape it, use it forever — or fold it in half and keep it next to your keyboard.</p>
+<blockquote>
+<p><strong>COPY (2 min)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Snapshot the folders the script will touch — <em>outside</em> the tree, <code>YYYY-MM-DD-BEFORE-thing</code></li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Secrets sweep clean (no keys in code; nothing sensitive in its blast radius)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Paths sweep clean (no bare <code>/</code> or <code>C:\</code>; no unexpected <code>..</code>; no delete-wildcards)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Three light reading passes done; risk list refreshed</li>
+</ul>
+<p><strong>RUN (5 min, staged)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Dry run on playground copies — watch counts, first few changes, untouched things, skips</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Mini-real rehearsal (3–5 real files) — does the output <em>look</em> right, name by name?</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Run twice — second run is either "nothing to do" or demonstrably safe</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Now, and only now: real run. Watch the same four things. Expect a <em>quiet</em> run.</li>
+</ul>
+<p><strong>ROLLBACK (2 min)</strong></p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Can I name the undo path right now, from memory? (If no: make one before continuing.)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Drill it on the rehearsal set, roughly every 10th run: roll back, verify identical, re-run.</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> If surprised at any stage: stop, describe the surprise in plain words to the AI, re-run from Phase 1.</li>
+</ul>
+</blockquote>
+<p>Laminate it if you must (figuratively); it's the whole book in fifteen lines.</p>
+<h2 id="ten-minute-budget-realistically">Ten-minute budget, realistically</h2>
+<p>Let's time it honestly — the routine has to fit in an evening to survive:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reading passes (Ch 2)</td>
+<td>5—8 min (fast after a few scripts; beginners take 15)</td>
+</tr>
+<tr>
+<td>Pre-mortem questions (Ch 4)</td>
+<td>3–5 min</td>
+</tr>
+<tr>
+<td>COPY phase</td>
+<td>2–3 min</td>
+</tr>
+<tr>
+<td>RUN phases (dry, mini-real, run-twice, real)</td>
+<td>5–8 min</td>
+</tr>
+<tr>
+<td>ROLLBACK noted/drilled</td>
+<td>0–2 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>~15 minutes first times; ~10 once it's a habit</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Fifteen minutes is the honest first-time number; don't let anyone tell you less. The habit is real once it's under ten and doesn't feel like effort. It does get there — the walkthrough in Chapter 9 comes in at roughly nine.</p>
+<h2 id="when-the-routine-encounters-the-ais-own-workflow">When the routine encounters the AI's own workflow</h2>
+<p>If you're using an agent like OpenCode directly in your project (the <em>Free AI Coding with OpenCode</em> route), the routine adapts cleanly:</p>
+<ul>
+<li>Phase 1's snapshot becomes <code>git commit</code> before the task (plus the branch habit that book teaches).</li>
+<li>Phase 2's dry run is often OpenCode's <strong>plan mode</strong> — a plan you read <em>before</em> it writes anything, which is a dry run for <em>plans</em>.</li>
+<li>Phase 3's rollback is <code>git restore</code> and/or <code>/undo</code>.</li>
+</ul>
+<p>The <em>sequence</em> stays identical, though: see it before it happens, rehearse before it's real, undo is a proven step and not a wish. That's the deeply transferable idea: <strong>the routine is tool-agnostic — it's a philosophy of staged evidence, and it works in every environment you'll ever meet, including ones that don't exist yet.</strong></p>
+<h2 id="what-trusted-means-at-the-end">What "trusted" means at the end</h2>
+<p>The routine exits when a script has passed enough auditions that you use it without the ceremony. What enough means is your call, and here are honest criteria:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Three real runs, no surprises, counts verified each time</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> The run-twice check is trusted (second run always says "nothing to do")</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> The rollback has been drilled recently enough that you could do it half-asleep</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Its failure modes are known to you — you've <em>seen</em> it fail (on purpose: fed it an empty file, a missing folder) and it failed gracefully</li>
+</ul>
+<p>Green on all four = everyday tool; checklists optional but recommended weekly. Two greens = audition tool; full routine every time. Anything less — including code you can't read at all (Chapter 2's "?" list unresolved) — stays a full-routine tool, permanent. There's no shame in a script living at full routine forever: plenty of real code works this way, in every serious shop, all the time.</p>
+<p>Boring, repeatable, calm. That's the whole routine. Now let's <em>watch</em> it happen, block by block, on a real script.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="07-secrets-and-paths-to-check.html">← Chapter 7 — Secrets and Paths to Check</a>
+<a href="09-annotated-walkthrough.html">Chapter 9 — An Annotated Walkthrough →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 8 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>

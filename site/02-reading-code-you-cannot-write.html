@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Reading AI-Written Code — A non-coder's guide to using AI-written code safely, by Asdale Dynamics, LLC">
+<title>Chapter 2 — Reading Code You Cannot Write · Reading AI-Written Code</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="site-header"><div class="bookmark"><a href="index.html">Reading AI-Written Code</a></div></div>
+<main>
+<h1>Chapter 2 — Reading Code You Cannot Write</h1>
+<div class="chapter-meta">Chapter 2 · ~1,658 words · ~8 min read</div>
+<p>Chapter 1 gave you the mental model: code is a recipe for a literal-minded cook, and reading means scanning for <strong>power and boundaries</strong>. This chapter gives you the actual method — a ten-minute, three-pass way to read any AI-written script without being able to write one.</p>
+<p>Before the method, one mindset reset. People who "can't program" tend to open a code file and feel the same dread as opening a book in a language they don't speak. But code has a superpower natural language doesn't: <strong>it's readable backwards, in any order, one part at a time.</strong> You can start in the middle, find one clause you understand, and grow out from there. There's no plot to lose. Enter anywhere, exit anytime.</p>
+<h2 id="pass-1-the-structure-pass-2-minutes">Pass 1: The structure pass (2 minutes)</h2>
+<p>You're not reading yet — you're <em>mapping</em>. Scan top to bottom and collect, on a sticky note or in a comment at the top of your notes:</p>
+<p><strong>Files, and what they claim to be.</strong> The file name itself is data. <code>rename_photos.py</code> promises one thing; <code>backup_and_email_and_delete.py</code> promises four things. Multi-promise scripts get extra suspicion; single-promise scripts get slightly less.</p>
+<p><strong>The comments at the top.</strong> AI-written scripts usually open with a header comment block explaining usage. Read it — but read it as a <em>claim</em>, not a description. The comment was written by the same confident author whose claims we'll audit in Chapter 3. Header comments often genuinely lie by omission: they say what a script does, not what <em>changes</em> it makes.</p>
+<p><strong>The function names.</strong> Functions are the script's table of contents. Just reading them in order usually tells you the story:</p>
+<table>
+<thead>
+<tr>
+<th>Function sequence</th>
+<th>The story it tells you before reading a single body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>find_files</code>, <code>parse_dates</code>, <code>build_new_name</code>, <code>rename_safely</code>, <code>main</code></td>
+<td>Takes files, works out new names aligned to dates, renames with a safety emphasis. Coherent.</td>
+</tr>
+<tr>
+<td><code>load_config</code>, <code>connect</code>, <code>fetch_all</code>, <code>transform</code>, <code>push_to_remote</code>, <code>cleanup</code></td>
+<td>Reads settings, goes to the network, fetches data, changes it, sends it somewhere else, then "cleans up" — and cleanup is exactly the kind of vague word that hides deletes. Be more suspicious.</td>
+</tr>
+<tr>
+<td><code>obfuscate</code>, <code>encode_payload</code>, <code>do_request</code>, <code>decode_response</code></td>
+<td>A network thing that hides what it's sending. Anytime "encode/obfuscate" appears without an obvious honest purpose, stop and question.</td>
+</tr>
+</tbody>
+</table>
+<p>Naming honesty is a real signal. An AI-generated script with a function called <code>rename_safely</code> might still not rename safely — functions can be ignorantly or aspirationally named — but it's <em>more</em> likely than one named <code>do_it</code>. More importantly, a name like <code>push_to_remote</code> is a <strong>boundary marker</strong>: it names a part of your world (somewhere remote) the script will touch.</p>
+<h2 id="pass-2-the-power-pass-3-minutes">Pass 2: The power pass (3 minutes)</h2>
+<p>Now read for four specific kinds of lines. You're allowed to skip everything else.</p>
+<p><strong>1. Imports — who is it borrowing power from?</strong></p>
+<table>
+<thead>
+<tr>
+<th>Import you'll see</th>
+<th>What power it grants</th>
+<th>Read it as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>os</code>, <code>shutil</code>, <code>pathlib</code>, <code>Path</code></td>
+<td>Files and folders — the cook's hands</td>
+<td>"This touches my files."</td>
+</tr>
+<tr>
+<td><code>requests</code>, <code>urllib</code>, <code>httpx</code>, <code>fetch</code>/<code>axios</code> (JS)</td>
+<td>The internet — sends and downloads</td>
+<td>"This talks to the outside world."</td>
+</tr>
+<tr>
+<td><code>subprocess</code>, <code>child_process</code>, <code>exec</code>, <code>spawn</code></td>
+<td>Runs <em>other programs</em></td>
+<td>"This can do literally anything the Other Program can do."</td>
+</tr>
+<tr>
+<td><code>smtplib</code>, <code>email</code>, <code>nodemailer</code></td>
+<td>Sends email</td>
+<td>"This sends mail as me."</td>
+</tr>
+<tr>
+<td><code>json</code>, <code>csv</code>, <code>sqlite3</code>, <code>database</code></td>
+<td>Reads/writes structured data, maybe databases</td>
+<td>"This changes data records, not just files."</td>
+</tr>
+<tr>
+<td><code>schedule</code>, <code>time.sleep</code> in loops, <code>threading</code></td>
+<td>Runs over time / in parallel</td>
+<td>"This doesn't necessarily end when I expect."</td>
+</tr>
+<tr>
+<td><code>crypt</code>/<code>bcrypt</code>/<code>hashlib</code> with no clear reason</td>
+<td>Password or credential handling</td>
+<td>Red flag. Why does a photo-renamer need this?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. Loops — what is it doing once for <em>every</em> thing?</strong></p>
+<p><code>for</code> loops are where scripts scale up their effect. "Rename 3 files" and "rename 30,000 files" can be the <em>same line of code</em>. Find each loop and ask: over what collection, and is the range what I'd expect? A silent classic: a loop over <code>os.listdir(".")</code> — which includes files you forgot exist, plus system clutter the script will now chew on.</p>
+<p><strong>3. Conditions — what are its safety valves?</strong></p>
+<p><code>if</code> statements are the script's boundaries. For each loop or destructive action, look uphill: is there a check that says "this thing exists," "this thing isn't empty," "this thing matches what I expect"? A script whose dangerous line has an <code>if</code> guarding it is infinitely tamer than the same dangerous line with nothing above it. Beginners should learn to <em>spot the void</em>: a destructive line standing naked in the code, nothing between it and execution.</p>
+<p><strong>4. Danger words — the specific classics.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Danger word</th>
+<th>Typical meaning</th>
+<th>Why non-programmers should know it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>remove</code>, <code>unlink</code>, <code>os.remove</code>, <code>del</code></td>
+<td>Deletes a file — gone, no undo, no trash</td>
+<td>The cook doesn't use a trash can.</td>
+</tr>
+<tr>
+<td><code>rmtree</code>, <code>shutil.rmtree</code>, <code>rm -rf</code></td>
+<td>Deletes a folder <strong>and everything inside it</strong></td>
+<td>Nuclear. Chapter 7.</td>
+</tr>
+<tr>
+<td><code>"w"</code> mode, <code>open(f, "w")</code>, <code>WriteAllText</code></td>
+<td><strong>Overwrites</strong> a file with new content</td>
+<td>Old contents replaced forever.</td>
+</tr>
+<tr>
+<td><code>write()</code> on an existing file (JS/Go-style), <code>&gt;</code> in shell</td>
+<td>Same as above, different costume</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subprocess</code>, <code>os.system</code>, backticks in shell code</td>
+<td>Runs another program with these words as arguments</td>
+<td>Bugs here can become arbitrary commands run as you.</td>
+</tr>
+<tr>
+<td><code>requests.post</code>, <code>fetch(url, {method: "POST"})</code></td>
+<td>Sends data somewhere over the network</td>
+<td>Where to? That's a question for Chapter 3/4.</td>
+</tr>
+<tr>
+<td><code>curl</code> piped into <code>bash</code> or <code>sh</code> (download-and-run in one line)</td>
+<td>Downloads a script and runs it <em>immediately</em></td>
+<td>The single most "trust me" pattern in existence.</td>
+</tr>
+<tr>
+<td><code>chmod</code>, <code>sudo</code>, <code>Authorization: Bearer</code></td>
+<td>Changes permissions / does privileged things / sends a credential</td>
+<td>Chapter 7 twice.</td>
+</tr>
+<tr>
+<td><code>.env</code>, <code>config</code>, <code>password</code>, <code>token</code>, <code>api_key</code></td>
+<td>Credential-adjacent words anywhere</td>
+<td>Instant Chapter 7 reading pass.</td>
+</tr>
+<tr>
+<td><code>git push --force</code>, <code>rm -rf .git</code></td>
+<td>Rewrites or destroys your version history</td>
+<td>Refuse automatically.</td>
+</tr>
+</tbody>
+</table>
+<p>You do not need to memorize this table to use this book; you need to <em>skim with it in mind</em>, and let Chapter 10's checklist remind you. Pro readers google unknown words rather than skip them — and if an AI is beside you (OpenCode, ChatGPT, etc.), the fastest move is: <strong>"What does this exact line do? What's the worst realistic thing it could do?"</strong> — no shame in that, ever. The AI can't read your mind, but it <em>can</em> annotate its own work; using it for that is Chapter 4's job.</p>
+<h2 id="pass-3-the-boundary-pass-5-minutes">Pass 3: The boundary pass (5 minutes)</h2>
+<p>Now you read, slowly, only the <strong>contact points</strong> — the places where the script touches Anything That Exists:</p>
+<ol>
+<li><strong>Every file it might open, write, rename, or delete.</strong> Trace each one: is the name hard-coded (<code>"photos"</code>) — which is brittle but predictable — or assembled from something flexible? Where does the flexible part come from: your typing, a config file, an AI guess?</li>
+<li><strong>Every network send.</strong> What data goes where, and is the destination a name you recognize and approve?</li>
+<li><strong>Every external program it runs.</strong> A script that shells out to <code>rclone</code>, <code>git</code>, <code>ffmpeg</code>, or <code>node</code> inherits <em>all</em> of those programs' powers. You should know which ones and why.</li>
+<li><strong>Endings.</strong> Does the script end when you'd expect? Or does it loop forever / run on a schedule / wait for more work? Anything that "doesn't necessarily stop" needs an extra look at Chapter 5 (the run-twice rule).</li>
+</ol>
+<p>For each contact point, run a small three-question audit:</p>
+<ul>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does it <strong>check first</strong>? (Does the code verify the thing exists, is non-empty, matches expectations, <em>before</em> acting?)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does it <strong>ask me first</strong>? (For anything irreversible: does the script prompt — or at minimum support a dry-run — or just act?)</li>
+<li class="todo"><span class="box" aria-hidden="true">☐</span> Does it <strong>limit itself</strong>? (Loops bounded? Files restricted to one folder? Sizes capped? Retries limited?)</li>
+</ul>
+<p>Three yeses = a well-bounded script. Two or fewer = you found exactly where to point your Chapter 4 questions. This is the whole reader's game: <strong>notice where the power is, then check whether anyone built fences around it.</strong></p>
+<h2 id="what-to-do-when-you-hit-something-you-truly-dont-understand">What to do when you hit something you truly don't understand</h2>
+<p>You will, often. Three moves, in order:</p>
+<ol>
+<li><strong>Note it and keep scanning.</strong> Non-programmers' biggest reading mistake is <em>bailing out at the first hard line</em>, as if reading requires total comprehension. It doesn't. Exit and reenter; mark it <code>?</code> and move on. Many "?"s resolve themselves from context two paragraphs later.</li>
+<li><strong>Ask your AI to explain <em>that exact line</em>, like this:</strong> "Explain line 14 like I've never programmed. What does it do? Worst realistic thing it could do? Is there a safer version?" Asking <em>per line</em> works much better than asking "explain this whole file" (the answer will be confident, generic, and too long). Line-by-line keeps the AI honest.</li>
+<li><strong>If it still doesn't resolve: it goes on the risk list.</strong> Anything you don't understand <em>as a reader</em> is, by definition, a boundary whose power you haven't assessed — treat it as a candidate risk, and let Chapter 4 turn your list into pointed questions before you ever run anything.</li>
+</ol>
+<h2 id="one-warning-about-reading-ai-code-that-reads-fine">One warning about reading AI code that reads "fine"</h2>
+<p>AI-written code is usually <em>beautiful</em>. Consistent spacing, nice function names, friendly comments, tidy structure. It doesn't look like a beginner's chaos; it looks like a senior engineer's prose. This is a trap worth naming in plain terms: <strong>looks-professional and works-safely are different axes.</strong> Beautiful code with no error handling will crash the same way ugly code would; a confidently commented script can still hard-code a wrong path. In Chapter 3 we'll target the <em>claims</em> made about beautiful code; here, just stamp this on your brain: <strong>style is not safety.</strong> You're reading for power and fences, not for elegance.</p>
+<hr />
+</main>
+<div class="nav">
+<a href="01-what-code-actually-does.html">← Chapter 1 — What Code Actually Does</a>
+<a href="03-spotting-trust-me-moments.html">Chapter 3 — Spotting the &quot;Trust Me&quot; Moments →</a>
+</div>
+<div class="footer">Reading AI-Written Code · Chapter 2 · By Asdale Dynamics, LLC · MIT License · <a href="index.html">contents</a></div>
+</body>
+</html>
